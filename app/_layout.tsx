@@ -116,20 +116,22 @@ export default function RootLayout() {
         <View className="absolute inset-x-0 top-0 h-full justify-center">
           <View className="flex-row w-full justify-between">
             <Pressable
-              className="h-40 w-[15%] bg-slate-800"
+              className="h-40 w-[15%] bg-slate-700 flex-col active:bg-slate-800"
               onPress={() => rotatePokeBall("left")}
             >
-              <View className="h-[9.5rem] flex-col justify-center items-end bg-slate-700">
+              <View className="h-[9.5rem] flex-col justify-center items-end">
                 <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 -rotate-90" />
               </View>
+              <View className="h-2 bg-slate-800"/>
             </Pressable>
             <Pressable
-              className="h-40 w-[15%] bg-slate-800"
+              className="h-40 w-[15%] bg-slate-700 flex-col active:bg-slate-800"
               onPress={() => rotatePokeBall("right")}
             >
-              <View className="h-[9.5rem] flex-col justify-center items-start bg-slate-700">
+              <View className="h-[9.5rem] flex-col justify-center items-start">
                 <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 rotate-90" />
               </View>
+              <View className="h-2 bg-slate-800"/>
             </Pressable>
           </View>
         </View>
