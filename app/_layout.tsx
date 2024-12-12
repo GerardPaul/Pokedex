@@ -2,13 +2,13 @@ import "../assets/css/global.css";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Text, View, Pressable } from "react-native";
+import { useFonts } from "expo-font";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
-import { useFonts } from "expo-font";
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -16,10 +16,6 @@ export default function RootLayout() {
     PokemonSolid: require("../assets/fonts/Pokemon-Solid.ttf"),
     PokemonHollow: require("../assets/fonts/Pokemon-Hollow.ttf"),
   });
-
-  if (!loaded) {
-    return null;
-  }
 
   const rotateDeg = useSharedValue(0);
 
@@ -53,6 +49,10 @@ export default function RootLayout() {
     }
   };
 
+  if (!loaded) {
+    return null;
+  }
+
   return (
     <View className="flex-1 flex-col">
       <StatusBar hidden={true} />
@@ -82,6 +82,9 @@ export default function RootLayout() {
               <View className="w-full bg-blue-200 border-8 border-slate-400">
                 <Stack>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="pokemon" options={{ headerShown: false }} />
+                  <Stack.Screen name="list" options={{ headerShown: false }} />
+                  <Stack.Screen name="details" options={{ headerShown: false }} />
                 </Stack>
               </View>
             </View>
