@@ -60,7 +60,7 @@ export default function Index() {
             {/* Image placeholder */}
             <View className="h-[85%] flex-row justify-center px-5 bg-red-600">
               <View className="w-full bg-blue-200 border-8 border-slate-400">
-                
+                {/* Pokemon sprites and images */}
               </View>
             </View>
 
@@ -68,7 +68,9 @@ export default function Index() {
             <View className="h-[15%] flex-col bg-red-800">
               <View className="h-[90%] flex-row justify-center bg-red-600">
                 <View className="w-[75%] flex-col bg-slate-600">
-                  <View className="h-[90%] bg-slate-200"></View>
+                  <View className="h-[90%] bg-slate-200">
+                    {/* Pokemon name and type icons */}
+                  </View>
                 </View>
               </View>
             </View>
@@ -103,12 +105,11 @@ export default function Index() {
 
         {/* Pokeball */}
         <Animated.View className="absolute inset-x-0 -top-10 items-center" style={[animateRotation]}>
-          <View className="w-36 h-36 flex-row rounded-full border-8 border-slate-800 bg-slate-800 relative"
-            >
+          <View className="w-36 h-36 flex-row rounded-full border-8 border-slate-800 bg-slate-800 relative">
             <View className="w-1/2 bg-red-600 rounded-l-full border-r-4 border-slate-800"/>
             <View className="w-1/2 bg-white rounded-r-full border-l-4 border-slate-800"/>
             <View className="absolute inset-x-0 top-0 flex-col justify-center items-center h-full">
-              <View className="h-12 w-12 bg-white rounded-full border-8 border-slate-800"></View>
+              <View className="h-12 w-12 bg-white rounded-full border-8 border-slate-800"/>
             </View>
           </View>
         </Animated.View>
@@ -123,7 +124,13 @@ export default function Index() {
           
           {/* Second screen */}
           <View className="w-10/12 flex-col">
-            <View className="h-3/4 bg-red-100"></View>
+            <View className="h-3/4 flex-col pt-5 px-2">
+              <View className="flex-1 bg-blue-200 border-8 border-slate-400">
+                {/* Pokemon details */}
+              </View>
+            </View>
+
+            {/* Buttons */}
             <View className="h-1/4 flex-row">
               <View className="flex-row w-[30%] items-center px-2">
                 <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
