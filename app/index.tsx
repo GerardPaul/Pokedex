@@ -37,7 +37,7 @@ export default function Index() {
   return (
     <View className="flex-1 flex-col">
       {/* Top Screen */}
-      <View className="h-3/5 bg-red-400 relative">
+      <View className="h-3/5 bg-slate-800 relative">
         {/* Light bar behind pokeball */}
         <View className="h-[10%] bg-red-600 flex-col justify-center">
           <View className="h-2 bg-yellow-500"/>
@@ -115,7 +115,57 @@ export default function Index() {
       </View>
 
       {/* Bottom Screen */}
-      <View className="h-2/5 bg-red-500"></View>
+      <View className="h-2/5 bg-slate-800 flex-col">
+        <View className="h-[90%] flex-row">
+          <View className="w-1/12 flex-row justify-center">
+            <View className="w-1 bg-red-800"/>
+          </View>
+          
+          {/* Second screen */}
+          <View className="w-10/12 flex-col">
+            <View className="h-3/4 bg-red-100"></View>
+            <View className="h-1/4 flex-row">
+              <View className="flex-row w-[30%] items-center px-2">
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+                <View className="w-2 h-[40%] bg-slate-900 mr-1"/>
+              </View>
+              <View className="flex-row w-[70%] justify-end items-center">
+                <Pressable className="h-14 w-14 rounded-full border-4 border-slate-700 bg-green-600 active:bg-green-800"
+                  onPress={() => alert("Pressed green button.")}/>
+                <View className="flex-row">
+                  <Pressable className="w-12 h-7 bg-yellow-400 ml-4 flex-col justify-end active:bg-yellow-800"
+                    onPress={() => alert("Pressed yellow button.")}>
+                    <View className="w-full h-1 bg-yellow-800"/>
+                  </Pressable>
+                  <Pressable className="w-12 h-7 bg-blue-400 ml-4 flex-col justify-end active:bg-blue-800"
+                    onPress={() => alert("Pressed blue button.")}>
+                    <View className="w-full h-1 bg-blue-800"/>
+                  </Pressable>
+                  <Pressable className="w-12 h-7 bg-red-400 ml-4 flex-col justify-end active:bg-red-800"
+                    onPress={() => alert("Pressed red button.")}>
+                    <View className="w-full h-1 bg-red-800"/>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View className="w-1/12 flex-row justify-center">
+            <View className="w-1 bg-red-800"/>
+          </View>
+        </View>
+        <View className="h-[10%] flex-row bg-slate-800">
+          <View className="w-[5%] bg-red-800"/>
+          <View className="h-1 w-[90%] bg-red-800"/>
+          <View className="w-[5%] bg-red-800"/>
+        </View>
+      </View>
     </View>
   );
 }
