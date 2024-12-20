@@ -1,7 +1,7 @@
 import "../assets/css/global.css";
-import { Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { Text, View, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import { useFonts } from "expo-font";
 import Animated, {
   useSharedValue,
@@ -11,6 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHouse, fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 
 library.add(fas, faHouse);
 
@@ -103,8 +104,11 @@ export default function RootLayout() {
             <View className="h-[15%] flex-col bg-red-800">
               <View className="h-[90%] flex-row justify-center bg-red-600">
                 <View className="w-[75%] flex-col bg-slate-600">
-                  <View className="h-[90%] bg-slate-200">
+                  <View className="h-[90%] bg-slate-200 justify-center items-center">
                     {/* Pokemon name and type icons */}
+                    <Link href="/pokemon" className="p-2 bg-red-500 rounded-full text-white">
+                      <FontAwesomeIcon icon={"home"} color="white"></FontAwesomeIcon>
+                    </Link>
                   </View>
                 </View>
               </View>
