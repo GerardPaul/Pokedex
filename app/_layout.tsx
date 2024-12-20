@@ -9,6 +9,10 @@ import Animated, {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faHouse, fas } from "@fortawesome/free-solid-svg-icons";
+
+library.add(fas, faHouse);
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -57,7 +61,7 @@ export default function RootLayout() {
     <View className="flex-1 flex-col">
       <StatusBar hidden={true} />
       {/* Top Screen */}
-      <View className="h-3/5 bg-slate-800 relative">
+      <View className="h-3/5 w-screen bg-slate-800 relative">
         {/* Light bar behind pokeball */}
         <View className="h-[10%] bg-red-600 flex-col justify-center">
           <View className="h-2 bg-yellow-500" />
@@ -82,9 +86,15 @@ export default function RootLayout() {
               <View className="w-full bg-blue-200 border-8 border-slate-400">
                 <Stack>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
-                  <Stack.Screen name="pokemon" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="pokemon"
+                    options={{ headerShown: false }}
+                  />
                   <Stack.Screen name="list" options={{ headerShown: false }} />
-                  <Stack.Screen name="details" options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="details"
+                    options={{ headerShown: false }}
+                  />
                 </Stack>
               </View>
             </View>
@@ -112,43 +122,43 @@ export default function RootLayout() {
           </View>
         </View>
 
-        {/* Buttons */}
-        <View className="absolute inset-x-0 top-0 h-full justify-center">
-          <View className="flex-row w-full justify-between">
-            <Pressable
-              className="h-40 w-[15%] bg-slate-700 flex-col active:bg-slate-800"
-              onPress={() => rotatePokeBall("left")}
-            >
-              <View className="h-[9.5rem] flex-col justify-center items-end">
-                <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 -rotate-90" />
-              </View>
-              <View className="h-2 bg-slate-800"/>
-            </Pressable>
-            <Pressable
-              className="h-40 w-[15%] bg-slate-700 flex-col active:bg-slate-800"
-              onPress={() => rotatePokeBall("right")}
-            >
-              <View className="h-[9.5rem] flex-col justify-center items-start">
-                <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 rotate-90" />
-              </View>
-              <View className="h-2 bg-slate-800"/>
-            </Pressable>
-          </View>
+        {/* Left Button */}
+        <View className="absolute inset-y-0 left-0 w-[15%] justify-center">
+          <Pressable
+            className="h-40  bg-slate-700 flex-col active:bg-slate-800"
+            onPress={() => rotatePokeBall("left")}
+          >
+            <View className="h-[9.5rem] flex-col justify-center items-end">
+              <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 -rotate-90" />
+            </View>
+            <View className="h-2 bg-slate-800" />
+          </Pressable>
+        </View>
+        {/* Right Button */}
+        <View className="absolute inset-y-0 right-0 w-[15%] justify-center">
+          <Pressable
+            className="h-40  bg-slate-700 flex-col active:bg-slate-800"
+            onPress={() => rotatePokeBall("right")}
+          >
+            <View className="h-[9.5rem] flex-col justify-center items-start">
+              <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 rotate-90" />
+            </View>
+            <View className="h-2 bg-slate-800" />
+          </Pressable>
         </View>
 
         {/* Pokeball */}
-        <Animated.View
-          className="absolute inset-x-0 -top-10 items-center"
-          style={[animateRotation]}
-        >
-          <View className="w-36 h-36 flex-row rounded-full border-8 border-slate-800 bg-slate-800 relative">
-            <View className="w-1/2 bg-red-600 rounded-l-full border-r-4 border-slate-800" />
-            <View className="w-1/2 bg-white rounded-r-full border-l-4 border-slate-800" />
-            <View className="absolute inset-x-0 top-0 flex-col justify-center items-center h-full">
-              <View className="h-12 w-12 bg-white rounded-full border-8 border-slate-800" />
+        <View className="absolute inset-x-0 -top-10 items-center">
+          <Animated.View style={[animateRotation]} className="rounded-full bg-slate-900">
+            <View className="w-36 h-36 flex-row rounded-full border-8 border-slate-800 bg-slate-800 relative">
+              <View className="w-1/2 bg-red-600 rounded-l-full border-r-4 border-slate-800" />
+              <View className="w-1/2 bg-white rounded-r-full border-l-4 border-slate-800" />
+              <View className="absolute inset-x-0 top-0 flex-col justify-center items-center h-full">
+                <View className="h-12 w-12 bg-white rounded-full border-8 border-slate-800" />
+              </View>
             </View>
-          </View>
-        </Animated.View>
+          </Animated.View>
+        </View>
       </View>
 
       {/* Bottom Screen */}
