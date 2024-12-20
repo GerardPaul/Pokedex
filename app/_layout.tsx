@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHouse, fas } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { LabelText } from "@/components/LabelText";
 
 library.add(fas, faHouse);
 
@@ -106,9 +106,7 @@ export default function RootLayout() {
                 <View className="w-[75%] flex-col bg-slate-600">
                   <View className="h-[90%] bg-slate-200 justify-center items-center">
                     {/* Pokemon name and type icons */}
-                    <Link href="/pokemon" className="p-2 bg-red-500 rounded-full text-white">
-                      <FontAwesomeIcon icon={"home"} color="white"></FontAwesomeIcon>
-                    </Link>
+                    <LabelText></LabelText>
                   </View>
                 </View>
               </View>
