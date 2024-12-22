@@ -2,7 +2,7 @@ import { FlatList, Text, View } from "react-native";
 import { Link } from "expo-router";
 import { PokemonSprite } from "@/components/PokemonSprite";
 
-export default function PokemonScreen() {
+export default function SpritesScreen() {
   const pokemons = [
     { id: "1", name: "", sprite: "" },
     { id: "2", name: "", sprite: "" },
