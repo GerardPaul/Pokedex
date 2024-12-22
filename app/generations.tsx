@@ -1,5 +1,7 @@
-import { Text, View, FlatList } from "react-native";
+import { Text, View, FlatList, Pressable } from "react-native";
 import { Link } from "expo-router";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 type ItemData = {
   id: number;
@@ -8,7 +10,7 @@ type ItemData = {
 };
 
 export default function GenerationsScreen() {
-  const generations: ItemData[]  = [
+  const generations: ItemData[] = [
     { id: 1, name: "generation-i", title: "Generation 1" },
     { id: 2, name: "generation-ii", title: "Generation 2" },
     { id: 3, name: "generation-iii", title: "Generation 3" },
@@ -22,23 +24,27 @@ export default function GenerationsScreen() {
 
   const renderGenerationList = ({ item }: { item: ItemData }) => {
     return (
-        <View className="px-4 py-5 my-1 bg-slate-300">
-          <Link href="/pokemon">
-            <Text className="font-semibold text-slate-900 text-lg">
+      <View className="mb-1">
+        <Link href="/pokemon" asChild>
+          <Pressable className="w-full flex-row px-4 py-5 justify-center items-center bg-blue-200 active:bg-slate-200">
+            <MaterialIcons name="catching-pokemon" size={24} color="#DC2626" />
+            <Text className="font-PokemonSolid tracking-[0.11em] leading-normal text-slate-700 text-lg mx-2">
               {item.title}
             </Text>
-          </Link>
-        </View>
-      );
+            <FontAwesome6 name="caret-right" size={20} color="#334155" />
+          </Pressable>
+        </Link>
+      </View>
+    );
   };
 
   return (
-    <View className="flex-1 bg-blue-200 justify-center items-center">
+    <View className="flex-1 bg-blue-200 justify-center items-center pt-10">
       <FlatList
         className="h-full flex-1 w-full"
         data={generations}
         renderItem={renderGenerationList}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
       />
     </View>
   );
