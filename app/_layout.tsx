@@ -1,5 +1,12 @@
 import "../assets/css/global.css";
-import { Link, Stack } from "expo-router";
+import {
+  Link,
+  router,
+  Stack,
+  useNavigation,
+  usePathname,
+  useRouter,
+} from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View, Pressable } from "react-native";
 import { useFonts } from "expo-font";
@@ -10,8 +17,30 @@ import Animated, {
   ReduceMotion,
 } from "react-native-reanimated";
 import { LabelText } from "@/components/LabelText";
+import { useEffect, useState } from "react";
 
 export default function RootLayout() {
+  const pathname = usePathname();
+  const currentScreen = pathname.replace(/\//g, "");
+  const navigationList = {
+    generations: {
+      back: "",
+      next: "",
+    },
+    sprites: {},
+    pokemon: {},
+  };
+
+  const router = useRouter();
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (page !== 1) {
+      setPage(1);
+      router.setParams({ page: 1 });
+    }
+  }, [currentScreen]);
+
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
     PokemonSolid: require("../assets/fonts/Pokemon-Solid.ttf"),
@@ -27,7 +56,7 @@ export default function RootLayout() {
   });
 
   const rotatePokeBall = (direction: string) => {
-    if (direction === "left") {
+    if (direction === "back") {
       rotateDeg.value = withSpring(rotateDeg.value - 180, {
         mass: 1,
         damping: 6,
@@ -37,7 +66,7 @@ export default function RootLayout() {
         restSpeedThreshold: 2,
         reduceMotion: ReduceMotion.Never,
       });
-    } else if (direction === "right") {
+    } else if (direction === "next") {
       rotateDeg.value = withSpring(rotateDeg.value + 180, {
         mass: 1,
         damping: 6,
@@ -49,6 +78,16 @@ export default function RootLayout() {
       });
     }
   };
+
+  function updatePage(direction: "back" | "next") {
+    rotatePokeBall(direction);
+    if (currentScreen === "generations") {
+      const newPage =
+        direction === "back" ? Math.max(page - 1, 1) : Math.min(page + 1, 9);
+      setPage(newPage);
+      router.setParams({ page: newPage });
+    }
+  }
 
   if (!loaded) {
     return null;
@@ -128,7 +167,7 @@ export default function RootLayout() {
         <View className="absolute inset-y-0 left-0 w-[15%] justify-center">
           <Pressable
             className="h-40  bg-slate-700 flex-col active:bg-slate-800"
-            onPress={() => rotatePokeBall("left")}
+            onPress={() => updatePage("back")}
           >
             <View className="h-[9.5rem] flex-col justify-center items-end">
               <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 -rotate-90" />
@@ -140,7 +179,7 @@ export default function RootLayout() {
         <View className="absolute inset-y-0 right-0 w-[15%] justify-center">
           <Pressable
             className="h-40  bg-slate-700 flex-col active:bg-slate-800"
-            onPress={() => rotatePokeBall("right")}
+            onPress={() => updatePage("next")}
           >
             <View className="h-[9.5rem] flex-col justify-center items-start">
               <View className="h-1 w-1 bg-transparent border-solid border-l-[25px] border-r-[25px] border-b-[25px] border-l-transparent border-r-transparent border-b-red-500 rotate-90" />
