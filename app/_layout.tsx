@@ -9,11 +9,7 @@ import Animated, {
   withSpring,
   ReduceMotion,
 } from "react-native-reanimated";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faHouse, fas } from "@fortawesome/free-solid-svg-icons";
 import { LabelText } from "@/components/LabelText";
-
-library.add(fas, faHouse);
 
 export default function RootLayout() {
   const [loaded] = useFonts({
@@ -87,13 +83,17 @@ export default function RootLayout() {
               <View className="w-full bg-blue-200 border-8 border-slate-400">
                 <Stack>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
+                  <Stack.Screen name="home" options={{ headerShown: false }} />
                   <Stack.Screen
-                    name="pokemon"
+                    name="generations"
                     options={{ headerShown: false }}
                   />
-                  <Stack.Screen name="list" options={{ headerShown: false }} />
                   <Stack.Screen
-                    name="details"
+                    name="sprites"
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="pokemon"
                     options={{ headerShown: false }}
                   />
                 </Stack>
@@ -104,7 +104,7 @@ export default function RootLayout() {
             <View className="h-[15%] flex-col bg-red-800">
               <View className="h-[90%] flex-row justify-center bg-red-600">
                 <View className="w-[75%] flex-col bg-slate-600">
-                  <View className="h-[90%] bg-slate-200 justify-center items-center">
+                  <View className="h-[90%] bg-slate-200 justify-center">
                     {/* Pokemon name and type icons */}
                     <LabelText></LabelText>
                   </View>
@@ -151,7 +151,10 @@ export default function RootLayout() {
 
         {/* Pokeball */}
         <View className="absolute inset-x-0 -top-10 items-center">
-          <Animated.View style={[animateRotation]} className="rounded-full bg-slate-900">
+          <Animated.View
+            style={[animateRotation]}
+            className="rounded-full bg-slate-900"
+          >
             <View className="w-36 h-36 flex-row rounded-full border-8 border-slate-800 bg-slate-800 relative">
               <View className="w-1/2 bg-red-600 rounded-l-full border-r-4 border-slate-800" />
               <View className="w-1/2 bg-white rounded-r-full border-l-4 border-slate-800" />
