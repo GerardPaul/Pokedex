@@ -1,7 +1,11 @@
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { PokemonSprite } from "@/components/PokemonSprite";
+import { useLocalSearchParams } from "expo-router";
 
 export default function SpritesScreen() {
+  const data = useLocalSearchParams();
+  const generation = data.generation;
+  
   const pokemons = [
     { id: "1", name: "Bulbasaur", sprite: "" },
     { id: "2", name: "Ivysaur", sprite: "" },
@@ -29,7 +33,7 @@ export default function SpritesScreen() {
     return (
       <View
         key={data.id}
-        className="w-[25%] h-[20%] bg-red-200 items-center justify-center p-1"
+        className="w-[33.33%] h-[20%] items-center justify-center p-1"
       >
         <PokemonSprite data={data}></PokemonSprite>
       </View>
@@ -37,6 +41,11 @@ export default function SpritesScreen() {
   });
 
   return (
-    <View className="flex-1 bg-blue-200 flex-wrap p-3 flex-row">{sprites}</View>
+    <View className="flex-1 bg-blue-200">
+      <View className="h-[10%] bg-slate-700 justify-center px-5">
+        <Text className="text-slate-200 font-PokemonSolid tracking-[0.11em] leading-normal px-1">Gen {generation}</Text>
+      </View>
+      <View className="h-[90%] flex-wrap flex-row px-3">{sprites}</View>
+    </View>
   );
 }

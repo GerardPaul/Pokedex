@@ -1,11 +1,8 @@
 import "../assets/css/global.css";
 import {
-  Link,
   router,
   Stack,
-  useNavigation,
   usePathname,
-  useRouter,
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View, Pressable } from "react-native";
@@ -31,7 +28,6 @@ export default function RootLayout() {
     pokemon: {},
   };
 
-  const router = useRouter();
   const [page, setPage] = useState(1);
 
   useEffect(() => {
