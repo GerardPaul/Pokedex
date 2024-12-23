@@ -5,7 +5,10 @@ import { Link } from "expo-router";
 export function PokemonSprite({ data }: any) {
   return (
     <View className="h-56 w-56">
-      <Link href="/pokemon" asChild>
+      <Link href={{
+          pathname: "/pokemon",
+          params: { id: data.id, name: data.name, sprite: data.sprite},
+        }} asChild>
         <Pressable className="justify-center items-center p-1 rounded-lg text-slate-700 active:text-white active:bg-slate-700">
           <FontAwesome6
             name="spaghetti-monster-flying"
