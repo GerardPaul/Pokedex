@@ -1,10 +1,23 @@
-import { View, Text } from "react-native";
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { View, Text, Pressable } from "react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { Link } from "expo-router";
 
-export function PokemonSprite() {
+export function PokemonSprite({ data }: any) {
   return (
-    <View className="h-56 w-56 bg-red-300">
-      <FontAwesome6 name="spaghetti-monster-flying" size={24} color="white" />
+    <View className="h-56 w-56">
+      <Link href={{
+          pathname: "/pokemon",
+          params: { id: data.id, name: data.name, sprite: data.sprite},
+        }} asChild>
+        <Pressable className="justify-center items-center p-1 rounded-lg text-slate-700 active:text-white active:bg-slate-700">
+          <FontAwesome6
+            name="spaghetti-monster-flying"
+            size={24}
+            color="#1E293B"
+          />
+          <Text className="text-[0.5rem]">{data.name}</Text>
+        </Pressable>
+      </Link>
     </View>
   );
 }
