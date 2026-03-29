@@ -21,7 +21,7 @@ export function LabelText() {
           </Link>
         )}
       </View>
-      <View className="bg-red-300 w-4/5 h-full items-center"></View>
+      <View className="w-4/5 h-full items-center"></View>
     </View>
   );
 }
