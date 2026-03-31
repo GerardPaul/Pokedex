@@ -2,6 +2,7 @@ import "../assets/css/global.css";
 import {
   router,
   Stack,
+  useLocalSearchParams,
   usePathname,
 } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -14,28 +15,12 @@ import Animated, {
   ReduceMotion,
 } from "react-native-reanimated";
 import { LabelText } from "@/components/LabelText";
-import { useEffect, useState } from "react";
 
 export default function RootLayout() {
   const pathname = usePathname();
   const currentScreen = pathname.replace(/\//g, "");
-  const navigationList = {
-    generations: {
-      back: "",
-      next: "",
-    },
-    sprites: {},
-    pokemon: {},
-  };
-
-  const [page, setPage] = useState(1);
-
-  useEffect(() => {
-    if (page !== 1) {
-      setPage(1);
-      router.setParams({ page: 1 });
-    }
-  }, [currentScreen]);
+  const params = useLocalSearchParams();
+  const currentPage = Number(params.page) || 1;
 
   const [loaded] = useFonts({
     SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
@@ -58,8 +43,6 @@ export default function RootLayout() {
         damping: 6,
         stiffness: 400,
         overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 2,
         reduceMotion: ReduceMotion.Never,
       });
     } else if (direction === "next") {
@@ -68,8 +51,6 @@ export default function RootLayout() {
         damping: 6,
         stiffness: 400,
         overshootClamping: false,
-        restDisplacementThreshold: 0.01,
-        restSpeedThreshold: 2,
         reduceMotion: ReduceMotion.Never,
       });
     }
@@ -79,8 +60,7 @@ export default function RootLayout() {
     rotatePokeBall(direction);
     if (currentScreen === "generations") {
       const newPage =
-        direction === "back" ? Math.max(page - 1, 1) : Math.min(page + 1, 9);
-      setPage(newPage);
+        direction === "back" ? Math.max(currentPage - 1, 1) : Math.min(currentPage + 1, 9);
       router.setParams({ page: newPage });
     }
   }

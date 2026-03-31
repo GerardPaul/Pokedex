@@ -5,7 +5,7 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function GenerationsScreen() {
   const direction = useLocalSearchParams();
-  let page = direction.page ?? 1;
+  const page = Number(direction.page) || 1;
 
   return (
     <View className="flex-1 bg-blue-200 justify-center items-center">
