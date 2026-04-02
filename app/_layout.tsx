@@ -46,7 +46,7 @@ function NavBar() {
       </Pressable>
 
       <Text className="font-PokemonSolid text-base tracking-widest text-red-500">
-        Pokédex
+        Compendeon
       </Text>
 
       <Pressable

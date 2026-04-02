@@ -30,7 +30,7 @@ export default function IndexScreen() {
   return (
     <View className="flex-1 bg-slate-100 items-center justify-center">
       <Text className="font-PokemonSolid text-3xl text-red-600 tracking-widest mb-10">
-        Pokédex
+        Welcome Trainer!
       </Text>
 
       <View className="flex-row items-center justify-center">

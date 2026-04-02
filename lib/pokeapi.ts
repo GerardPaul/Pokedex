@@ -78,7 +78,7 @@ function idFromUrl(url: string): number {
 }
 
 function spriteUrl(id: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -136,7 +136,7 @@ export async function fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
 }
 
 export function spriteUrlFromId(id: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
 }
 
 export function getFlavorText(species: PokemonSpecies): string {
