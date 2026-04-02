@@ -39,6 +39,7 @@ export default function PokemonDetailScreen() {
     detail.sprites.other["official-artwork"].front_default ??
     detail.sprites.front_default ??
     "";
+  const shinyUri = detail.sprites.front_shiny;
 
   return (
     <View className="flex-1 bg-slate-100 items-center justify-center px-6">
@@ -65,6 +66,21 @@ export default function PokemonDetailScreen() {
           </View>
         ))}
       </View>
+
+      {/* Shiny sprite */}
+      {shinyUri ? (
+        <View className="items-center mt-4">
+          <Image
+            source={{ uri: shinyUri }}
+            style={{ width: 72, height: 72 }}
+            contentFit="contain"
+            recyclingKey={`shiny-${detail.id}`}
+          />
+          <Text className="text-[9px] text-yellow-500 font-SpaceMono uppercase tracking-widest mt-0.5">
+            ✦ Shiny
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 }
