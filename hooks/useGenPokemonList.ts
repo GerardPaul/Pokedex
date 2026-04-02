@@ -113,7 +113,7 @@ export function useGenPokemonList(generationId: number): UseGenPokemonListResult
         } finally {
           setLoading(false);
         }
-      }, 400);
+      }, 1000);
     },
     [loadPage]
   );

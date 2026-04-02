@@ -101,7 +101,7 @@ export function usePokemonList(): UsePokemonListResult {
       } finally {
         setLoading(false);
       }
-    }, 400);
+    }, 1000);
   }, [loadPage]);
 
   const refresh = useCallback(() => {
