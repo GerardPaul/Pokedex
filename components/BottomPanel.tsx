@@ -1,6 +1,5 @@
 import { View, Text, ActivityIndicator, ScrollView } from "react-native";
 import { useSelection } from "@/context/SelectionContext";
-import { useGeneration } from "@/hooks/useGeneration";
 
 function PokemonDetailPanel() {
   const { pokemonDetail: detail, pokemonFlavorText: flavorText, pokemonDetailLoading: loading, pokemonDetailError: error } = useSelection();
@@ -76,8 +75,7 @@ function PokemonDetailPanel() {
 }
 
 function GenerationDetailPanel() {
-  const { generationId } = useSelection();
-  const { generation, loading, error } = useGeneration(generationId);
+  const { generationDetail: generation, generationDetailLoading: loading, generationDetailError: error } = useSelection();
 
   if (loading) {
     return (

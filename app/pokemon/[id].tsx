@@ -58,7 +58,8 @@ export default function PokemonDetailScreen() {
         {detail.types.map((t) => (
           <View
             key={t.type.name}
-            className={`px-4 py-1 rounded-full ${TYPE_COLORS[t.type.name] ?? "bg-slate-400"}`}
+            className="px-4 py-1 rounded-full"
+            style={{ backgroundColor: TYPE_COLORS[t.type.name] ?? "#94a3b8" }}
           >
             <Text className="text-white text-xs font-SpaceMono capitalize">{t.type.name}</Text>
           </View>

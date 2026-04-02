@@ -8,7 +8,7 @@ import type { PokemonListItem } from "@/lib/pokeapi";
 export default function GenerationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const numericId = Number(id);
-  const { selectGeneration, selectPokemon } = useSelection();
+  const { selectGeneration, selectPokemon, generationDetail } = useSelection();
   const router = useRouter();
 
   const {
@@ -20,7 +20,7 @@ export default function GenerationDetailScreen() {
     loadMore,
     search,
     searchQuery,
-  } = useGenPokemonList(numericId);
+  } = useGenPokemonList(numericId, generationDetail);
 
   useEffect(() => {
     selectGeneration(numericId);

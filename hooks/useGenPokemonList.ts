@@ -1,11 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
-  fetchPokemonByGeneration,
   fetchPokemonByType,
   searchPokemonByName,
   type PokemonListItem,
+  type GenerationDetail,
+  spriteUrlFromId,
 } from "@/lib/pokeapi";
-import { useRef } from "react";
 
 const PAGE_SIZE = 20;
 
@@ -22,110 +22,105 @@ interface UseGenPokemonListResult {
   refresh: () => void;
 }
 
-export function useGenPokemonList(generationId: number): UseGenPokemonListResult {
+function idFromUrl(url: string): number {
+  const parts = url.replace(/\/$/, "").split("/");
+  return Number(parts[parts.length - 1]);
+}
+
+export function useGenPokemonList(generationId: number, generationDetail: GenerationDetail | null = null): UseGenPokemonListResult {
   const [pokemon, setPokemon] = useState<PokemonListItem[]>([]);
   const [page, setPage] = useState(1);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasMore, setHasMore] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<PokemonListItem[] | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const loadPage = useCallback(
-    async (pageNum: number, append: boolean) => {
-      try {
-        const { items, total: t } = await fetchPokemonByGeneration(generationId, pageNum);
-        setPokemon((prev) => (append ? [...prev, ...items] : items));
-        setTotal(t);
-        setHasMore(pageNum * PAGE_SIZE < t);
-        setError(null);
-      } catch {
-        setError("Failed to load Pokémon. Please check your connection.");
-      } finally {
-        setLoading(false);
-        setLoadingMore(false);
-      }
-    },
-    [generationId]
-  );
+  // Sorted species list derived from the already-fetched generationDetail — no extra API call
+  const sortedSpecies = generationDetail
+    ? [...generationDetail.pokemon_species].sort((a, b) => idFromUrl(a.url) - idFromUrl(b.url))
+    : [];
 
-  // Reset and load when generationId changes
+  const total = sortedSpecies.length;
+  const pagedItems: PokemonListItem[] = sortedSpecies.slice(0, page * PAGE_SIZE).map((s) => {
+    const id = idFromUrl(s.url);
+    return { id, name: s.name, sprite: spriteUrlFromId(id) };
+  });
+  const hasMore = page * PAGE_SIZE < total;
+
+  // Reset pagination when generation changes
   useEffect(() => {
-    if (searchQuery) return;
-    setPokemon([]);
     setPage(1);
-    setLoading(true);
-    loadPage(1, false);
-  }, [generationId, loadPage, searchQuery]);
+    setSearchQuery("");
+    setSearchResults(null);
+    setSearchError(null);
+  }, [generationId]);
 
   const loadMore = useCallback(() => {
-    if (loadingMore || !hasMore || searchQuery) return;
-    setLoadingMore(true);
-    const nextPage = page + 1;
-    setPage(nextPage);
-    loadPage(nextPage, true);
-  }, [loadingMore, hasMore, page, loadPage, searchQuery]);
+    if (!hasMore || searchQuery) return;
+    setPage((p) => p + 1);
+  }, [hasMore, searchQuery]);
 
   const search = useCallback(
     (query: string) => {
       setSearchQuery(query);
-
       if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
       if (!query.trim()) {
-        setPokemon([]);
-        setPage(1);
-        setLoading(true);
-        setHasMore(true);
-        loadPage(1, false);
+        setSearchResults(null);
+        setSearchError(null);
         return;
       }
 
       searchTimeout.current = setTimeout(async () => {
-        setLoading(true);
-        setError(null);
+        setSearchLoading(true);
+        setSearchError(null);
         try {
-          // Within a generation: first try name, then type filtered to this generation
           const byName = await searchPokemonByName(query.trim());
           if (byName.length > 0) {
-            setPokemon(byName);
-            setHasMore(false);
+            setSearchResults(byName);
           } else {
             const byType = await fetchPokemonByType(query.trim());
-            // Filter to only pokemon in this generation's range
-            // We approximate by checking against the already-loaded total range
-            // More complete filtering happens via the full gen detail already cached
             if (byType.length > 0) {
-              setPokemon(byType);
-              setHasMore(false);
+              setSearchResults(byType);
             } else {
-              setPokemon([]);
-              setHasMore(false);
-              setError(`No Pokémon found for "${query}" in this generation.`);
+              setSearchResults([]);
+              setSearchError(`No Pokémon found for "${query}" in this generation.`);
             }
           }
         } catch {
-          setPokemon([]);
-          setHasMore(false);
-          setError(`No Pokémon found for "${query}" in this generation.`);
+          setSearchResults([]);
+          setSearchError(`No Pokémon found for "${query}" in this generation.`);
         } finally {
-          setLoading(false);
+          setSearchLoading(false);
         }
-      }, 1000);
+      }, 700);
     },
-    [loadPage]
+    []
   );
 
   const refresh = useCallback(() => {
-    setSearchQuery("");
-    setPokemon([]);
     setPage(1);
-    setLoading(true);
-    setHasMore(true);
-    loadPage(1, false);
-  }, [loadPage]);
+    setSearchQuery("");
+    setSearchResults(null);
+    setSearchError(null);
+  }, []);
 
-  return { pokemon, loading, loadingMore, error, hasMore, loadMore, search, searchQuery, total, refresh };
+  const loading = !generationDetail && !searchQuery;
+  const loadingMore = false;
+  const activePokemon = searchResults !== null ? searchResults : pagedItems;
+  const activeError = searchError;
+
+  return {
+    pokemon: activePokemon,
+    loading: loading || searchLoading,
+    loadingMore,
+    error: activeError,
+    hasMore: searchResults !== null ? false : hasMore,
+    loadMore,
+    search,
+    searchQuery,
+    total,
+    refresh,
+  };
 }

@@ -185,7 +185,8 @@ export async function fetchGenerationDetail(id: number): Promise<GenerationDetai
 
 export async function fetchPokemonByGeneration(
   generationId: number,
-  page: number
+  page: number,
+  prefetchedDetail?: GenerationDetail
 ): Promise<{ items: PokemonListItem[]; total: number }> {
   const cacheKey = `@pokedex/gen_pokemon_${generationId}_page_${page}`;
   const totalKey = `@pokedex/gen_pokemon_${generationId}_total`;
@@ -196,7 +197,7 @@ export async function fetchPokemonByGeneration(
     return { items: cachedItems, total: cachedTotal };
   }
 
-  const gen = await fetchGenerationDetail(generationId);
+  const gen = prefetchedDetail ?? await fetchGenerationDetail(generationId);
   const total = gen.pokemon_species.length;
 
   // Species are not returned in national dex order — sort by id extracted from url

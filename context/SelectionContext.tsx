@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { PokemonListItem, PokemonDetail } from "@/lib/pokeapi";
+import type { PokemonListItem, PokemonDetail, GenerationDetail } from "@/lib/pokeapi";
 import { usePokemon } from "@/hooks/usePokemon";
+import { useGeneration } from "@/hooks/useGeneration";
 
 type SelectionType = "pokemon" | "generation" | null;
 
@@ -18,6 +19,9 @@ interface SelectionContextValue extends SelectionState {
   pokemonFlavorText: string;
   pokemonDetailLoading: boolean;
   pokemonDetailError: string | null;
+  generationDetail: GenerationDetail | null;
+  generationDetailLoading: boolean;
+  generationDetailError: string | null;
 }
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
@@ -30,7 +34,8 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   });
 
   // Single fetch — shared by all consumers via context
-  const { detail, flavorText, loading, error } = usePokemon(state.pokemon?.id ?? null);
+  const { detail, flavorText, loading: pokemonLoading, error: pokemonError } = usePokemon(state.pokemon?.id ?? null);
+  const { generation, loading: genLoading, error: genError } = useGeneration(state.generationId);
 
   const selectPokemon = useCallback((pokemon: PokemonListItem) => {
     setState({ type: "pokemon", pokemon, generationId: null });
@@ -53,8 +58,11 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         clearSelection,
         pokemonDetail: detail,
         pokemonFlavorText: flavorText,
-        pokemonDetailLoading: loading,
-        pokemonDetailError: error,
+        pokemonDetailLoading: pokemonLoading,
+        pokemonDetailError: pokemonError,
+        generationDetail: generation,
+        generationDetailLoading: genLoading,
+        generationDetailError: genError,
       }}
     >
       {children}
