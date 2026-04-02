@@ -1,5 +1,6 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
-import type { PokemonListItem, GenerationListItem } from "@/lib/pokeapi";
+import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
+import type { PokemonListItem, PokemonDetail } from "@/lib/pokeapi";
+import { usePokemon } from "@/hooks/usePokemon";
 
 type SelectionType = "pokemon" | "generation" | null;
 
@@ -13,6 +14,10 @@ interface SelectionContextValue extends SelectionState {
   selectPokemon: (pokemon: PokemonListItem) => void;
   selectGeneration: (id: number) => void;
   clearSelection: () => void;
+  pokemonDetail: PokemonDetail | null;
+  pokemonFlavorText: string;
+  pokemonDetailLoading: boolean;
+  pokemonDetailError: string | null;
 }
 
 const SelectionContext = createContext<SelectionContextValue | null>(null);
@@ -24,21 +29,33 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
     generationId: null,
   });
 
-  function selectPokemon(pokemon: PokemonListItem) {
+  // Single fetch — shared by all consumers via context
+  const { detail, flavorText, loading, error } = usePokemon(state.pokemon?.id ?? null);
+
+  const selectPokemon = useCallback((pokemon: PokemonListItem) => {
     setState({ type: "pokemon", pokemon, generationId: null });
-  }
+  }, []);
 
-  function selectGeneration(id: number) {
+  const selectGeneration = useCallback((id: number) => {
     setState({ type: "generation", pokemon: null, generationId: id });
-  }
+  }, []);
 
-  function clearSelection() {
+  const clearSelection = useCallback(() => {
     setState({ type: null, pokemon: null, generationId: null });
-  }
+  }, []);
 
   return (
     <SelectionContext.Provider
-      value={{ ...state, selectPokemon, selectGeneration, clearSelection }}
+      value={{
+        ...state,
+        selectPokemon,
+        selectGeneration,
+        clearSelection,
+        pokemonDetail: detail,
+        pokemonFlavorText: flavorText,
+        pokemonDetailLoading: loading,
+        pokemonDetailError: error,
+      }}
     >
       {children}
     </SelectionContext.Provider>

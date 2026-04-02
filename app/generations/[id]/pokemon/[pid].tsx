@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
-import { usePokemon } from "@/hooks/usePokemon";
 import { useSelection } from "@/context/SelectionContext";
 import { spriteUrlFromId } from "@/lib/pokeapi";
 import { TYPE_COLORS } from "@/lib/typeColors";
@@ -10,16 +9,11 @@ import { TYPE_COLORS } from "@/lib/typeColors";
 export default function GenPokemonDetailScreen() {
   const { pid } = useLocalSearchParams<{ pid: string }>();
   const numericPid = Number(pid);
-  const { detail, loading, error } = usePokemon(numericPid);
-  const { selectPokemon } = useSelection();
+  const { selectPokemon, pokemonDetail: detail, pokemonDetailLoading: loading, pokemonDetailError: error } = useSelection();
 
   useEffect(() => {
-    if (detail) {
-      selectPokemon({ id: detail.id, name: detail.name, sprite: spriteUrlFromId(detail.id) });
-    } else if (numericPid) {
-      selectPokemon({ id: numericPid, name: "", sprite: spriteUrlFromId(numericPid) });
-    }
-  }, [detail, numericPid]);
+    selectPokemon({ id: numericPid, name: "", sprite: spriteUrlFromId(numericPid) });
+  }, [numericPid, selectPokemon]);
 
   if (loading) {
     return (
