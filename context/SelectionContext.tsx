@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
-import type { PokemonListItem, PokemonDetail, GenerationDetail } from "@/lib/pokeapi";
+import type { PokemonListItem, PokemonDetail, PokemonSpecies, GenerationDetail } from "@/lib/pokeapi";
 import { usePokemon } from "@/hooks/usePokemon";
 import { useGeneration } from "@/hooks/useGeneration";
 
@@ -16,6 +16,7 @@ interface SelectionContextValue extends SelectionState {
   selectGeneration: (id: number) => void;
   clearSelection: () => void;
   pokemonDetail: PokemonDetail | null;
+  pokemonSpecies: PokemonSpecies | null;
   pokemonFlavorText: string;
   pokemonDetailLoading: boolean;
   pokemonDetailError: string | null;
@@ -34,7 +35,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
   });
 
   // Single fetch — shared by all consumers via context
-  const { detail, flavorText, loading: pokemonLoading, error: pokemonError } = usePokemon(state.pokemon?.id ?? null);
+  const { detail, species, flavorText, loading: pokemonLoading, error: pokemonError } = usePokemon(state.pokemon?.id ?? null);
   const { generation, loading: genLoading, error: genError } = useGeneration(state.generationId);
 
   const selectPokemon = useCallback((pokemon: PokemonListItem) => {
@@ -57,6 +58,7 @@ export function SelectionProvider({ children }: { children: ReactNode }) {
         selectGeneration,
         clearSelection,
         pokemonDetail: detail,
+        pokemonSpecies: species,
         pokemonFlavorText: flavorText,
         pokemonDetailLoading: pokemonLoading,
         pokemonDetailError: pokemonError,

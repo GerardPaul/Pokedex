@@ -1,8 +1,19 @@
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, Pressable } from "react-native";
+import { useState } from "react";
 import { useSelection } from "@/context/SelectionContext";
 
+type PokemonTab = "info" | "dex" | "stats";
+
 function PokemonDetailPanel() {
-  const { pokemonDetail: detail, pokemonFlavorText: flavorText, pokemonDetailLoading: loading, pokemonDetailError: error } = useSelection();
+  const {
+    pokemonDetail: detail,
+    pokemonSpecies: species,
+    pokemonDetailLoading: loading,
+    pokemonDetailError: error,
+  } = useSelection();
+
+  const [activeTab, setActiveTab] = useState<PokemonTab>("info");
+  const [selectedVersion, setSelectedVersion] = useState<string | null>(null);
 
   if (loading) {
     return (
@@ -23,54 +34,140 @@ function PokemonDetailPanel() {
     );
   }
 
+  // Deduplicated english flavor texts keyed by version name
+  const dexEntries: { version: string; text: string }[] = [];
+  if (species) {
+    const seen = new Set<string>();
+    for (const entry of species.flavor_text_entries) {
+      if (entry.language.name !== "en") continue;
+      const ver = entry.version.name;
+      if (seen.has(ver)) continue;
+      seen.add(ver);
+      dexEntries.push({ version: ver, text: entry.flavor_text.replace(/\f|\n/g, " ") });
+    }
+  }
+
+  const activeDex = selectedVersion
+    ? dexEntries.find((e) => e.version === selectedVersion)
+    : dexEntries[0] ?? null;
+
+  const tabs: { key: PokemonTab; label: string }[] = [
+    { key: "info", label: "Info" },
+    { key: "dex", label: "Pokédex" },
+    { key: "stats", label: "Stats" },
+  ];
+
   return (
-    <ScrollView
-      className="flex-1"
-      contentContainerStyle={{ padding: 12 }}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* Height / Weight */}
-      <View className="flex-row gap-6 mb-3">
-        <View>
-          <Text className="text-[9px] text-slate-400 font-SpaceMono uppercase tracking-widest">Height</Text>
-          <Text className="text-xs text-slate-700 font-SpaceMono mt-0.5">
-            {(detail.height / 10).toFixed(1)} m
-          </Text>
-        </View>
-        <View>
-          <Text className="text-[9px] text-slate-400 font-SpaceMono uppercase tracking-widest">Weight</Text>
-          <Text className="text-xs text-slate-700 font-SpaceMono mt-0.5">
-            {(detail.weight / 10).toFixed(1)} kg
-          </Text>
-        </View>
+    <View className="flex-1">
+      {/* Tab bar */}
+      <View className="flex-row border-b border-slate-200">
+        {tabs.map((tab) => (
+          <Pressable
+            key={tab.key}
+            className={`flex-1 py-2 items-center ${activeTab === tab.key ? "border-b-2 border-red-500" : ""}`}
+            onPress={() => setActiveTab(tab.key)}
+          >
+            <Text
+              className={`font-SpaceMono text-[10px] uppercase tracking-widest ${
+                activeTab === tab.key ? "text-red-500" : "text-slate-400"
+              }`}
+            >
+              {tab.label}
+            </Text>
+          </Pressable>
+        ))}
       </View>
 
-      {/* Flavor text */}
-      <Text className="text-xs text-slate-600 font-SpaceMono leading-5 italic mb-3">
-        {flavorText}
-      </Text>
-
-      {/* Base Stats */}
-      <Text className="text-[10px] text-slate-400 font-SpaceMono mb-1 uppercase tracking-widest">
-        Base Stats
-      </Text>
-      {detail.stats.map((s) => (
-        <View key={s.stat.name} className="flex-row items-center mb-1">
-          <Text className="text-[9px] text-slate-400 font-SpaceMono capitalize w-20">
-            {s.stat.name.replace(/-/g, " ")}
-          </Text>
-          <Text className="text-[10px] text-slate-700 font-SpaceMono w-8 text-right">
-            {s.base_stat}
-          </Text>
-          <View className="flex-1 h-1.5 bg-slate-200 rounded-full ml-2">
-            <View
-              className="h-full bg-green-500 rounded-full"
-              style={{ width: `${Math.min((s.base_stat / 255) * 100, 100)}%` }}
-            />
+      {/* Tab content */}
+      <ScrollView
+        className="flex-1"
+        contentContainerStyle={{ padding: 12 }}
+        showsVerticalScrollIndicator={false}
+      >
+        {activeTab === "info" && (
+          <View className="flex-row gap-8">
+            <View>
+              <Text className="text-[9px] text-slate-400 font-SpaceMono uppercase tracking-widest">Height</Text>
+              <Text className="text-xs text-slate-700 font-SpaceMono mt-0.5">
+                {(detail.height / 10).toFixed(1)} m
+              </Text>
+            </View>
+            <View>
+              <Text className="text-[9px] text-slate-400 font-SpaceMono uppercase tracking-widest">Weight</Text>
+              <Text className="text-xs text-slate-700 font-SpaceMono mt-0.5">
+                {(detail.weight / 10).toFixed(1)} kg
+              </Text>
+            </View>
           </View>
-        </View>
-      ))}
-    </ScrollView>
+        )}
+
+        {activeTab === "dex" && (
+          <View>
+            {/* Game version buttons */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ gap: 6, paddingBottom: 10 }}
+            >
+              {dexEntries.map((entry) => {
+                const isActive =
+                  entry.version === (selectedVersion ?? dexEntries[0]?.version);
+                return (
+                  <Pressable
+                    key={entry.version}
+                    onPress={() => setSelectedVersion(entry.version)}
+                    className={`px-3 py-1 rounded-full border ${
+                      isActive
+                        ? "bg-red-500 border-red-500"
+                        : "bg-transparent border-slate-300"
+                    }`}
+                  >
+                    <Text
+                      className={`font-SpaceMono text-[10px] capitalize ${
+                        isActive ? "text-white" : "text-slate-500"
+                      }`}
+                    >
+                      {entry.version.replace(/-/g, " ")}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+            {/* Description */}
+            {activeDex ? (
+              <Text className="text-xs text-slate-600 font-SpaceMono leading-5 italic">
+                {activeDex.text}
+              </Text>
+            ) : (
+              <Text className="text-xs text-slate-400 font-SpaceMono italic">
+                No description available.
+              </Text>
+            )}
+          </View>
+        )}
+
+        {activeTab === "stats" && (
+          <View>
+            {detail.stats.map((s) => (
+              <View key={s.stat.name} className="flex-row items-center mb-1.5">
+                <Text className="text-[9px] text-slate-400 font-SpaceMono capitalize w-20">
+                  {s.stat.name.replace(/-/g, " ")}
+                </Text>
+                <Text className="text-[10px] text-slate-700 font-SpaceMono w-8 text-right">
+                  {s.base_stat}
+                </Text>
+                <View className="flex-1 h-1.5 bg-slate-200 rounded-full ml-2">
+                  <View
+                    className="h-full bg-green-500 rounded-full"
+                    style={{ width: `${Math.min((s.base_stat / 255) * 100, 100)}%` }}
+                  />
+                </View>
+              </View>
+            ))}
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
