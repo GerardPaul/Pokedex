@@ -3,7 +3,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
 import { useEffect } from "react";
 import { useSelection } from "@/context/SelectionContext";
-import { spriteUrlFromId } from "@/lib/pokeapi";
+import { spriteUrlFromId, shinySpriteUrlFromId } from "@/lib/pokeapi";
 import { TYPE_COLORS } from "@/lib/typeColors";
 
 export default function PokemonDetailScreen() {
@@ -39,7 +39,7 @@ export default function PokemonDetailScreen() {
     detail.sprites.other["official-artwork"].front_default ??
     detail.sprites.front_default ??
     "";
-  const shinyUri = detail.sprites.front_shiny;
+  const shinyUri = shinySpriteUrlFromId(detail.id);
 
   return (
     <View className="flex-1 bg-slate-100 items-center justify-center px-6">
@@ -47,6 +47,7 @@ export default function PokemonDetailScreen() {
         source={{ uri: artworkUri }}
         style={{ width: 200, height: 200 }}
         contentFit="contain"
+        cachePolicy="disk"
         recyclingKey={`main-${detail.id}`}
       />
       <Text className="text-[11px] text-slate-400 font-SpaceMono mt-2">#{paddedId}</Text>
@@ -74,6 +75,7 @@ export default function PokemonDetailScreen() {
             source={{ uri: shinyUri }}
             style={{ width: 72, height: 72 }}
             contentFit="contain"
+            cachePolicy="disk"
             recyclingKey={`shiny-${detail.id}`}
           />
           <Text className="text-[9px] text-yellow-500 font-SpaceMono uppercase tracking-widest mt-0.5">

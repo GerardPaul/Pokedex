@@ -21,6 +21,7 @@ export function PokemonCard({ pokemon, onPress }: PokemonCardProps) {
         source={{ uri: pokemon.sprite }}
         style={{ width: 64, height: 64 }}
         contentFit="contain"
+        cachePolicy="disk"
         transition={200}
         recyclingKey={`pokemon-${pokemon.id}`}
       />

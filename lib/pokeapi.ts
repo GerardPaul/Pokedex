@@ -78,7 +78,7 @@ function idFromUrl(url: string): number {
 }
 
 function spriteUrl(id: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -94,7 +94,7 @@ export async function fetchPokemonPage(page: number): Promise<PokemonListItem[]>
   const cacheKey = `@pokedex/pokemon_page_${page}`;
 
   const cached = await cacheGet<PokemonListItem[]>(cacheKey);
-  if (cached) return cached;
+  if (cached) return cached.map((item) => ({ ...item, sprite: spriteUrl(item.id) }));
 
   const data = await fetchJson<{ results: NamedResource[] }>(
     `${BASE}/pokemon?limit=${PAGE_SIZE}&offset=${offset}`
@@ -136,7 +136,11 @@ export async function fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
 }
 
 export function spriteUrlFromId(id: number): string {
-  return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;
+}
+
+export function shinySpriteUrlFromId(id: number): string {
+  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/shiny/${id}.png`;
 }
 
 export function getFlavorText(species: PokemonSpecies): string {
@@ -228,7 +232,11 @@ export async function searchPokemonByName(query: string): Promise<PokemonListIte
       // PokéAPI accepts name as id
       query.toLowerCase() as unknown as number
     );
-    return [{ id: detail.id, name: detail.name, sprite: spriteUrl(detail.id) }];
+    const sprite =
+      detail.sprites.front_default ??
+      detail.sprites.other["official-artwork"].front_default ??
+      spriteUrl(detail.id);
+    return [{ id: detail.id, name: detail.name, sprite }];
   } catch {
     return [];
   }
@@ -240,7 +248,7 @@ export async function fetchPokemonByType(typeName: string): Promise<PokemonListI
   const cacheKey = `@pokedex/type_${typeName.toLowerCase()}`;
 
   const cached = await cacheGet<PokemonListItem[]>(cacheKey);
-  if (cached) return cached;
+  if (cached) return cached.map((item) => ({ ...item, sprite: spriteUrl(item.id) }));
 
   const data = await fetchJson<TypeDetail>(
     `${BASE}/type/${typeName.toLowerCase()}`

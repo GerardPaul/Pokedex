@@ -2,6 +2,7 @@ import "../assets/css/global.css";
 import { Stack, router, usePathname } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { View, Text, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SelectionProvider, useSelection } from "@/context/SelectionContext";
@@ -26,47 +27,37 @@ function NavBar() {
 
   return (
     <View className="flex-row items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-700">
-      <Pressable
-        className="flex-row items-center gap-1 py-1 px-2 rounded-lg active:bg-slate-700"
-        onPress={handleBack}
-        disabled={isHome}
-        accessibilityLabel="Go back"
-        accessibilityRole="button"
-      >
-        <Ionicons
-          name="chevron-back"
-          size={18}
-          color={isHome ? "#475569" : "#e2e8f0"}
-        />
-        <Text
-          className={`font-SpaceMono text-xs ${isHome ? "text-slate-600" : "text-slate-200"}`}
+      {!isHome ? (
+        <Pressable
+          className="flex-row items-center gap-1 py-1 px-2 rounded-lg active:bg-slate-700"
+          onPress={handleBack}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
         >
-          Back
-        </Text>
-      </Pressable>
+          <Ionicons name="chevron-back" size={18} color="#e2e8f0" />
+          <Text className="font-SpaceMono text-xs text-slate-200">Back</Text>
+        </Pressable>
+      ) : (
+        <View className="w-16" />
+      )}
 
       <Text className="font-PokemonSolid text-base tracking-widest text-red-500">
         Compendeon
       </Text>
 
-      <Pressable
-        className="flex-row items-center gap-1 py-1 px-2 rounded-lg active:bg-slate-700"
-        onPress={handleHome}
-        disabled={isHome}
-        accessibilityLabel="Go to home"
-        accessibilityRole="button"
-      >
-        <Text
-          className={`font-SpaceMono text-xs ${isHome ? "text-slate-600" : "text-slate-200"}`}
+      {!isHome ? (
+        <Pressable
+          className="flex-row items-center gap-1 py-1 px-2 rounded-lg active:bg-slate-700"
+          onPress={handleHome}
+          accessibilityLabel="Go to home"
+          accessibilityRole="button"
         >
-          Home
-        </Text>
-        <Ionicons
-          name="home-outline"
-          size={18}
-          color={isHome ? "#475569" : "#e2e8f0"}
-        />
-      </Pressable>
+          <Text className="font-SpaceMono text-xs text-slate-200">Home</Text>
+          <Ionicons name="home-outline" size={18} color="#e2e8f0" />
+        </Pressable>
+      ) : (
+        <View className="w-16" />
+      )}
     </View>
   );
 }
@@ -81,8 +72,8 @@ function AppShell() {
   if (!loaded) return null;
 
   return (
-    <View className="flex-1 bg-slate-900">
-      <StatusBar hidden />
+    <SafeAreaView className="flex-1 bg-slate-900">
+      <StatusBar style="auto" />
 
       {/* Nav bar */}
       <NavBar />
@@ -107,7 +98,7 @@ function AppShell() {
       <View className="flex-[4] bg-white overflow-hidden">
         <BottomPanel />
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

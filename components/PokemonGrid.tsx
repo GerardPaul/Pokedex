@@ -79,6 +79,9 @@ export function PokemonGrid({
       }
       onEndReached={hasMore ? onLoadMore : undefined}
       onEndReachedThreshold={0.4}
+      initialNumToRender={6}
+      maxToRenderPerBatch={4}
+      windowSize={3}
       renderItem={({ item }) => (
         <PokemonCard pokemon={item} onPress={onSelectPokemon} />
       )}
