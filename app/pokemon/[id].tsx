@@ -1,9 +1,9 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, Pressable } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Image } from "expo-image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelection } from "@/context/SelectionContext";
-import { spriteUrlFromId, shinySpriteUrlFromId } from "@/lib/pokeapi";
+import { spriteUrlFromId, shinyArtworkUrlFromId } from "@/lib/pokeapi";
 import { TYPE_COLORS } from "@/lib/typeColors";
 
 export default function PokemonDetailScreen() {
@@ -14,6 +14,8 @@ export default function PokemonDetailScreen() {
   useEffect(() => {
     selectPokemon({ id: numericId, name: "", sprite: spriteUrlFromId(numericId) });
   }, [numericId, selectPokemon]);
+
+  const [showShiny, setShowShiny] = useState(false);
 
   if (loading) {
     return (
@@ -39,16 +41,16 @@ export default function PokemonDetailScreen() {
     detail.sprites.other["official-artwork"].front_default ??
     detail.sprites.front_default ??
     "";
-  const shinyUri = shinySpriteUrlFromId(detail.id);
+  const shinyUri = shinyArtworkUrlFromId(detail.id);
 
   return (
     <View className="flex-1 bg-slate-100 items-center justify-center px-6">
       <Image
-        source={{ uri: artworkUri }}
+        source={{ uri: showShiny ? shinyUri : artworkUri }}
         style={{ width: 200, height: 200 }}
         contentFit="contain"
         cachePolicy="disk"
-        recyclingKey={`main-${detail.id}`}
+        recyclingKey={`${showShiny ? "shiny" : "main"}-${detail.id}`}
       />
       <Text className="text-[11px] text-slate-400 font-SpaceMono mt-2">#{paddedId}</Text>
       <Text className="text-3xl font-PokemonSolid capitalize text-slate-800 tracking-widest mt-1">
@@ -68,21 +70,23 @@ export default function PokemonDetailScreen() {
         ))}
       </View>
 
-      {/* Shiny sprite */}
-      {shinyUri ? (
-        <View className="items-center mt-4">
-          <Image
-            source={{ uri: shinyUri }}
-            style={{ width: 72, height: 72 }}
-            contentFit="contain"
-            cachePolicy="disk"
-            recyclingKey={`shiny-${detail.id}`}
-          />
-          <Text className="text-[9px] text-yellow-500 font-SpaceMono uppercase tracking-widest mt-0.5">
-            ✦ Shiny
-          </Text>
-        </View>
-      ) : null}
+      {/* Shiny toggle */}
+      <Pressable
+        className={`flex-row items-center gap-1 mt-4 px-4 py-1.5 rounded-full border ${
+          showShiny ? "bg-yellow-400 border-yellow-400" : "bg-transparent border-slate-300"
+        }`}
+        onPress={() => setShowShiny((v) => !v)}
+        accessibilityLabel="Toggle shiny"
+        accessibilityRole="button"
+      >
+        <Text
+          className={`font-SpaceMono text-xs uppercase tracking-widest ${
+            showShiny ? "text-slate-900" : "text-slate-400"
+          }`}
+        >
+          ✦ Shiny
+        </Text>
+      </Pressable>
     </View>
   );
 }

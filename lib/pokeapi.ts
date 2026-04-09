@@ -143,6 +143,10 @@ export function shinySpriteUrlFromId(id: number): string {
   return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/shiny/${id}.png`;
 }
 
+export function shinyArtworkUrlFromId(id: number): string {
+  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
+}
+
 export function getFlavorText(species: PokemonSpecies): string {
   const entry = species.flavor_text_entries.find(
     (e) => e.language.name === "en"
