@@ -47,6 +47,7 @@ function SideNav() {
   }
 
   function handleNav(route: string) {
+    clearSelection();
     router.push(route as any);
   }
 
