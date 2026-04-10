@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import { useGenPokemonList } from "@/hooks/useGenPokemonList";
 import { useSelection } from "@/context/SelectionContext";
 import { PokemonGrid } from "@/components/PokemonGrid";
@@ -22,9 +23,11 @@ export default function GenerationDetailScreen() {
     searchQuery,
   } = useGenPokemonList(numericId, generationDetail);
 
-  useEffect(() => {
-    selectGeneration(numericId);
-  }, [numericId]);
+  useFocusEffect(
+    useCallback(() => {
+      selectGeneration(numericId);
+    }, [numericId, selectGeneration])
+  );
 
   function handleSelect(p: PokemonListItem) {
     selectPokemon(p);
