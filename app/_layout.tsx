@@ -53,13 +53,27 @@ function SideNav() {
 
   return (
     <View className="w-16 bg-slate-900 border-r border-slate-700 items-center py-3">
-      {/* App name */}
-      <Text
-        className="font-PokemonSolid text-red-500 text-[8px] tracking-wider text-center leading-3 mb-4 px-1"
-        numberOfLines={2}
+      {/* Home button — always on top */}
+      <Pressable
+        className={`w-full items-center py-3 mb-1 ${
+          isHome ? "bg-slate-700" : "active:bg-slate-800"
+        }`}
+        onPress={handleHome}
+        accessibilityLabel="Go to home"
+        accessibilityRole="button"
       >
-        {"Comp\nendeon"}
-      </Text>
+        <Ionicons name="home-outline" size={22} color={isHome ? "#ef4444" : "#94a3b8"} />
+        <Text
+          className={`font-SpaceMono text-[7px] mt-0.5 ${
+            isHome ? "text-red-400" : "text-slate-500"
+          }`}
+          numberOfLines={1}
+        >
+          Home
+        </Text>
+      </Pressable>
+
+      <View className="h-px bg-slate-700 w-full mb-1" />
 
       {/* Nav items */}
       <View className="flex-1 w-full">
@@ -91,32 +105,23 @@ function SideNav() {
             </Pressable>
           );
         })}
-      </View>
 
-      {/* Back & Home — only when not on home */}
-      {!isHome && (
-        <View className="w-full items-center">
-          <View className="h-px bg-slate-700 w-full mb-1" />
-          <Pressable
-            className="w-full items-center py-3 active:bg-slate-800"
-            onPress={handleBack}
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
-            <Ionicons name="chevron-back" size={22} color="#94a3b8" />
-            <Text className="font-SpaceMono text-[7px] mt-0.5 text-slate-500">Back</Text>
-          </Pressable>
-          <Pressable
-            className="w-full items-center py-3 active:bg-slate-800"
-            onPress={handleHome}
-            accessibilityLabel="Go to home"
-            accessibilityRole="button"
-          >
-            <Ionicons name="home-outline" size={22} color="#94a3b8" />
-            <Text className="font-SpaceMono text-[7px] mt-0.5 text-slate-500">Home</Text>
-          </Pressable>
-        </View>
-      )}
+        {/* Back button — after settings, only when applicable */}
+        {!isHome && (
+          <>
+            <View className="h-px bg-slate-700 w-full my-1" />
+            <Pressable
+              className="w-full items-center py-3 active:bg-slate-800"
+              onPress={handleBack}
+              accessibilityLabel="Go back"
+              accessibilityRole="button"
+            >
+              <Ionicons name="chevron-back" size={22} color="#94a3b8" />
+              <Text className="font-SpaceMono text-[7px] mt-0.5 text-slate-500">Back</Text>
+            </Pressable>
+          </>
+        )}
+      </View>
     </View>
   );
 }

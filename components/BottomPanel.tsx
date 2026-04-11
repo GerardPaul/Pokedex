@@ -1,6 +1,7 @@
 import { View, Text, ActivityIndicator, ScrollView, Pressable } from "react-native";
 import { useState } from "react";
 import { useSelection } from "@/context/SelectionContext";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 type PokemonTab = "info" | "dex" | "stats";
 
@@ -252,9 +253,7 @@ export function BottomPanel() {
   if (type === null) {
     return (
       <View className="flex-1 items-center justify-center">
-        <Text className="text-slate-300 font-SpaceMono text-xs">
-          Select a Pokémon or Generation
-        </Text>
+        <MaterialCommunityIcons name="pokeball" size={100} color="#e2e8f0" />
       </View>
     );
   }
