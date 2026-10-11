@@ -1,19 +1,60 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Image } from "expo-image";
 
-export async function cacheGet<T>(key: string): Promise<T | null> {
-  try {
-    const raw = await AsyncStorage.getItem(key);
-    if (raw === null) return null;
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
+// Bump the version to invalidate everything cached by older app builds.
+const PREFIX = "@pokedex/v2/";
+// Old and current API cache keys. User data (favorites) lives under "@pokedex-user/" and is never cleared here.
+const CACHE_ROOT = "@pokedex/";
+
+const memory = new Map<string, unknown>();
+const inflight = new Map<string, Promise<unknown>>();
+
+/** Memory → AsyncStorage → fetcher. Concurrent callers for the same key share one request. */
+export function cached<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
+  const fullKey = PREFIX + key;
+  if (memory.has(fullKey)) return Promise.resolve(memory.get(fullKey) as T);
+  const pending = inflight.get(fullKey);
+  if (pending) return pending as Promise<T>;
+
+  const promise = (async () => {
+    try {
+      const raw = await AsyncStorage.getItem(fullKey).catch(() => null);
+      if (raw !== null) {
+        try {
+          const value = JSON.parse(raw) as T;
+          memory.set(fullKey, value);
+          return value;
+        } catch {
+          // corrupt entry — fall through and refetch
+        }
+      }
+      const value = await fetcher();
+      memory.set(fullKey, value);
+      // storage write failure is non-fatal — app continues with live data
+      AsyncStorage.setItem(fullKey, JSON.stringify(value)).catch(() => {});
+      return value;
+    } finally {
+      inflight.delete(fullKey);
+    }
+  })();
+  inflight.set(fullKey, promise);
+  return promise;
 }
 
-export async function cacheSet<T>(key: string, value: T): Promise<void> {
-  try {
-    await AsyncStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // storage write failure is non-fatal — app continues with live data
-  }
+async function cacheKeys(): Promise<string[]> {
+  const keys = await AsyncStorage.getAllKeys();
+  return keys.filter((k) => k.startsWith(CACHE_ROOT));
+}
+
+/** Approximate bytes used by cached API data. */
+export async function cacheSize(): Promise<number> {
+  const values = await AsyncStorage.getMany(await cacheKeys());
+  return Object.values(values).reduce((sum, v) => sum + (v?.length ?? 0), 0);
+}
+
+export async function clearCache(): Promise<void> {
+  memory.clear();
+  await AsyncStorage.removeMany(await cacheKeys());
+  await Image.clearDiskCache().catch(() => {});
+  await Image.clearMemoryCache().catch(() => {});
 }

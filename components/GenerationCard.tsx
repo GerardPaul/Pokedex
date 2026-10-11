@@ -1,17 +1,18 @@
 import { View, Text, Pressable } from "react-native";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import type { GenerationListItem } from "@/lib/pokeapi";
+import { Image } from "expo-image";
+import { spriteUrlFromId, type GenerationListItem } from "@/lib/pokeapi";
 
-const REGION_NAMES: Record<number, string> = {
-  1: "Kanto",
-  2: "Johto",
-  3: "Hoenn",
-  4: "Sinnoh",
-  5: "Unova",
-  6: "Kalos",
-  7: "Alola",
-  8: "Galar",
-  9: "Paldea",
+// Static per-generation data: region, accent color and the grass/fire/water starters
+const GEN_INFO: Record<number, { region: string; accent: string; starters: number[] }> = {
+  1: { region: "Kanto", accent: "#ef4444", starters: [1, 4, 7] },
+  2: { region: "Johto", accent: "#eab308", starters: [152, 155, 158] },
+  3: { region: "Hoenn", accent: "#10b981", starters: [252, 255, 258] },
+  4: { region: "Sinnoh", accent: "#6366f1", starters: [387, 390, 393] },
+  5: { region: "Unova", accent: "#334155", starters: [495, 498, 501] },
+  6: { region: "Kalos", accent: "#3b82f6", starters: [650, 653, 656] },
+  7: { region: "Alola", accent: "#f97316", starters: [722, 725, 728] },
+  8: { region: "Galar", accent: "#a855f7", starters: [810, 813, 816] },
+  9: { region: "Paldea", accent: "#dc2626", starters: [906, 909, 912] },
 };
 
 interface GenerationCardProps {
@@ -20,20 +21,33 @@ interface GenerationCardProps {
 }
 
 export function GenerationCard({ generation, onPress }: GenerationCardProps) {
-  const region = REGION_NAMES[generation.id] ?? "Unknown";
+  const info = GEN_INFO[generation.id];
+  const region = info?.region ?? "Unknown";
+  const accent = info?.accent ?? "#94a3b8";
 
   return (
     <Pressable
-      className="w-[46%] m-[2%] bg-white rounded-xl p-4 items-center active:bg-slate-100"
+      className="w-[46%] m-[2%] bg-white rounded-xl overflow-hidden items-center active:opacity-70 border border-slate-200"
       onPress={() => onPress(generation)}
       accessibilityLabel={`Generation ${generation.id}, ${region} region`}
       accessibilityRole="button"
     >
-      <MaterialIcons name="catching-pokemon" size={40} color="#DC2626" />
-      <Text className="text-base font-PokemonSolid tracking-widest text-slate-800 mt-2">
-        Gen {generation.id}
+      <View className="h-1.5 w-full" style={{ backgroundColor: accent }} />
+      <View className="flex-row mt-3">
+        {(info?.starters ?? []).map((id) => (
+          <Image
+            key={id}
+            source={{ uri: spriteUrlFromId(id) }}
+            style={{ width: 40, height: 40 }}
+            contentFit="contain"
+            cachePolicy="memory-disk"
+          />
+        ))}
+      </View>
+      <Text className="text-base font-PokemonSolid tracking-widest text-slate-800 mt-1">Gen {generation.id}</Text>
+      <Text className="text-xs font-SpaceMono mt-1 mb-3" style={{ color: accent }}>
+        {region}
       </Text>
-      <Text className="text-xs font-SpaceMono text-slate-400 mt-1">{region}</Text>
     </Pressable>
   );
 }

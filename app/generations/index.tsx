@@ -1,12 +1,12 @@
 import { View, FlatList, Text, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
-import { useGenerations } from "@/hooks/useGenerations";
+import { useAsync } from "@/hooks/useAsync";
 import { GenerationCard } from "@/components/GenerationCard";
 import { useSelection } from "@/context/SelectionContext";
-import type { GenerationListItem } from "@/lib/pokeapi";
+import { fetchGenerations, type GenerationListItem } from "@/lib/pokeapi";
 
 export default function GenerationsScreen() {
-  const { generations, loading, error } = useGenerations();
+  const { data: generations, loading, error } = useAsync(fetchGenerations, []);
   const { selectGeneration } = useSelection();
   const router = useRouter();
 

@@ -1,27 +1,21 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
-import { useGenPokemonList } from "@/hooks/useGenPokemonList";
 import { useSelection } from "@/context/SelectionContext";
 import { PokemonGrid } from "@/components/PokemonGrid";
-import type { PokemonListItem } from "@/lib/pokeapi";
+import { useAsync } from "@/hooks/useAsync";
+import { fetchGenerationDetail, type PokemonListItem } from "@/lib/pokeapi";
 
 export default function GenerationDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const numericId = Number(id);
-  const { selectGeneration, selectPokemon, generationDetail } = useSelection();
+  const { selectGeneration } = useSelection();
   const router = useRouter();
 
-  const {
-    pokemon,
-    loading,
-    loadingMore,
-    error,
-    hasMore,
-    loadMore,
-    search,
-    searchQuery,
-  } = useGenPokemonList(numericId, generationDetail);
+  // Fetched here (memory-cached) rather than read from the selection context,
+  // so opening a Pokémon doesn't blank this grid and reset its scroll position.
+  const generation = useAsync(() => fetchGenerationDetail(numericId), [numericId]);
+  const speciesIds = useMemo(() => new Set(generation.data?.speciesIds ?? []), [generation.data]);
 
   useFocusEffect(
     useCallback(() => {
@@ -29,23 +23,17 @@ export default function GenerationDetailScreen() {
     }, [numericId, selectGeneration])
   );
 
-  function handleSelect(p: PokemonListItem) {
-    selectPokemon(p);
-    router.push(`/generations/${id}/pokemon/${p.id}` as any);
-  }
+  const handleSelect = useCallback(
+    (p: PokemonListItem) => router.push(`/generations/${id}/pokemon/${p.id}` as any),
+    [router, id]
+  );
 
   return (
     <PokemonGrid
-      pokemon={pokemon}
-      loading={loading}
-      loadingMore={loadingMore}
-      error={error}
-      hasMore={hasMore}
-      searchQuery={searchQuery}
-      onLoadMore={loadMore}
-      onSearch={search}
+      speciesIds={speciesIds}
+      loading={generation.loading}
       onSelectPokemon={handleSelect}
-      showSearch
+      emptyText={generation.error ?? "No Pokémon found in this generation."}
     />
   );
 }

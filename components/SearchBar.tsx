@@ -7,7 +7,7 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = "Search by name or type..." }: SearchBarProps) {
+export function SearchBar({ value, onChangeText, placeholder = "Search name, #number or type..." }: SearchBarProps) {
   return (
     <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-3 py-2 mx-3 my-2">
       <Ionicons name="search" size={16} color="#94a3b8" />

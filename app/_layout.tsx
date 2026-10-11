@@ -8,6 +8,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Entypo from "@expo/vector-icons/Entypo";
 import { SelectionProvider, useSelection } from "@/context/SelectionContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 import { BottomPanel } from "@/components/BottomPanel";
 
 const NAV_ITEMS = [
@@ -22,6 +23,12 @@ const NAV_ITEMS = [
     label: "Gens",
     route: "/generations",
     renderIcon: (color: string) => <Entypo name="flow-tree" size={22} color={color} />,
+  },
+  {
+    key: "favorites",
+    label: "Favs",
+    route: "/favorites",
+    renderIcon: (color: string) => <Ionicons name="star-outline" size={22} color={color} />,
   },
   {
     key: "settings",
@@ -153,6 +160,7 @@ function AppShell() {
             <Stack.Screen name="generations/index" />
             <Stack.Screen name="generations/[id]/index" />
             <Stack.Screen name="generations/[id]/pokemon/[pid]" />
+            <Stack.Screen name="favorites" />
             <Stack.Screen name="settings" />
           </Stack>
         </View>
@@ -171,8 +179,10 @@ function AppShell() {
 
 export default function RootLayout() {
   return (
-    <SelectionProvider>
-      <AppShell />
-    </SelectionProvider>
+    <FavoritesProvider>
+      <SelectionProvider>
+        <AppShell />
+      </SelectionProvider>
+    </FavoritesProvider>
   );
 }

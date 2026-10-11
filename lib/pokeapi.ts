@@ -1,11 +1,11 @@
-import { cacheGet, cacheSet } from "./cache";
+import { cached } from "./cache";
 
 const BASE = "https://pokeapi.co/api/v2";
-const PAGE_SIZE = 20;
+const SPRITES = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types (trimmed shapes — only what the app renders gets cached) ───────────
 
-export interface NamedResource {
+interface NamedResource {
   name: string;
   url: string;
 }
@@ -16,41 +16,22 @@ export interface PokemonListItem {
   sprite: string;
 }
 
-export interface PokemonType {
-  slot: number;
-  type: NamedResource;
-}
-
-export interface PokemonStat {
-  base_stat: number;
-  stat: NamedResource;
-}
-
 export interface PokemonDetail {
   id: number;
   name: string;
   height: number;
   weight: number;
-  sprites: {
-    front_default: string | null;
-    front_shiny: string | null;
-    other: {
-      "official-artwork": { front_default: string | null };
-    };
-  };
-  types: PokemonType[];
-  stats: PokemonStat[];
-  species: NamedResource;
+  artwork: string | null;
+  types: string[];
+  stats: { name: string; value: number }[];
+  abilities: { name: string; hidden: boolean }[];
 }
 
 export interface PokemonSpecies {
   id: number;
-  generation: NamedResource;
-  flavor_text_entries: Array<{
-    flavor_text: string;
-    language: NamedResource;
-    version: NamedResource;
-  }>;
+  genus: string | null;
+  flavorTexts: { version: string; text: string }[];
+  evolutionChainUrl: string | null;
 }
 
 export interface GenerationListItem {
@@ -60,15 +41,13 @@ export interface GenerationListItem {
 
 export interface GenerationDetail {
   id: number;
-  name: string;
-  main_region: NamedResource;
-  version_groups: NamedResource[];
-  pokemon_species: NamedResource[];
+  region: string;
+  games: string[];
+  speciesIds: number[]; // sorted national dex ids
 }
 
-export interface TypeDetail {
-  pokemon: Array<{ pokemon: NamedResource }>;
-}
+/** Evolution stages by depth, e.g. [[eevee], [vaporeon, jolteon, ...]] */
+export type EvolutionStages = { id: number; name: string }[][];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -77,8 +56,12 @@ function idFromUrl(url: string): number {
   return Number(parts[parts.length - 1]);
 }
 
-function spriteUrl(id: number): string {
-  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;
+export function spriteUrlFromId(id: number): string {
+  return `${SPRITES}/${id}.png`;
+}
+
+export function shinyArtworkUrlFromId(id: number): string {
+  return `${SPRITES}/other/official-artwork/shiny/${id}.png`;
 }
 
 async function fetchJson<T>(url: string): Promise<T> {
@@ -87,184 +70,116 @@ async function fetchJson<T>(url: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-// ─── Pokémon list (paginated) ──────────────────────────────────────────────────
+// ─── Full national dex index (one request, then everything is local) ──────────
 
-export async function fetchPokemonPage(page: number): Promise<PokemonListItem[]> {
-  const offset = (page - 1) * PAGE_SIZE;
-  const cacheKey = `@pokedex/pokemon_page_${page}`;
-
-  const cached = await cacheGet<PokemonListItem[]>(cacheKey);
-  if (cached) return cached.map((item) => ({ ...item, sprite: spriteUrl(item.id) }));
-
-  const data = await fetchJson<{ results: NamedResource[] }>(
-    `${BASE}/pokemon?limit=${PAGE_SIZE}&offset=${offset}`
-  );
-
-  const items: PokemonListItem[] = data.results.map((r) => {
-    const id = idFromUrl(r.url);
-    return { id, name: r.name, sprite: spriteUrl(id) };
+export async function fetchAllPokemon(): Promise<PokemonListItem[]> {
+  const index = await cached("species_index", async () => {
+    const data = await fetchJson<{ results: NamedResource[] }>(
+      `${BASE}/pokemon-species?limit=2000`
+    );
+    return data.results
+      .map((r) => ({ id: idFromUrl(r.url), name: r.name }))
+      .sort((a, b) => a.id - b.id);
   });
+  return index.map((p) => ({ ...p, sprite: spriteUrlFromId(p.id) }));
+}
 
-  await cacheSet(cacheKey, items);
-  return items;
+export function filterPokemon(
+  list: PokemonListItem[],
+  { query = "", typeIds, speciesIds }: { query?: string; typeIds?: Set<number>; speciesIds?: Set<number> }
+): PokemonListItem[] {
+  const q = query.trim().toLowerCase().replace(/^#/, "");
+  const asId = /^\d+$/.test(q) ? Number(q) : null;
+  return list.filter(
+    (p) =>
+      (!speciesIds || speciesIds.has(p.id)) &&
+      (!typeIds || typeIds.has(p.id)) &&
+      (!q || p.id === asId || p.name.includes(q))
+  );
 }
 
 // ─── Pokémon detail ────────────────────────────────────────────────────────────
 
-export async function fetchPokemonDetail(id: number): Promise<PokemonDetail> {
-  const cacheKey = `@pokedex/pokemon_detail_${id}`;
-
-  const cached = await cacheGet<PokemonDetail>(cacheKey);
-  if (cached) return cached;
-
-  const data = await fetchJson<PokemonDetail>(`${BASE}/pokemon/${id}`);
-  await cacheSet(cacheKey, data);
-  return data;
-}
-
-// ─── Pokémon species (flavor text + generation) ────────────────────────────────
-
-export async function fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
-  const cacheKey = `@pokedex/pokemon_species_${id}`;
-
-  const cached = await cacheGet<PokemonSpecies>(cacheKey);
-  if (cached) return cached;
-
-  const data = await fetchJson<PokemonSpecies>(`${BASE}/pokemon-species/${id}`);
-  await cacheSet(cacheKey, data);
-  return data;
-}
-
-export function spriteUrlFromId(id: number): string {
-  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/${id}.png`;
-}
-
-export function shinySpriteUrlFromId(id: number): string {
-  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/shiny/${id}.png`;
-}
-
-export function shinyArtworkUrlFromId(id: number): string {
-  return `https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
-}
-
-export function getFlavorText(species: PokemonSpecies): string {
-  const entry = species.flavor_text_entries.find(
-    (e) => e.language.name === "en"
-  );
-  return entry
-    ? entry.flavor_text.replace(/\f|\n/g, " ")
-    : "No description available.";
-}
-
-// ─── Generation list ──────────────────────────────────────────────────────────
-
-export async function fetchGenerations(): Promise<GenerationListItem[]> {
-  const cacheKey = "@pokedex/generations_index";
-
-  const cached = await cacheGet<GenerationListItem[]>(cacheKey);
-  if (cached) return cached;
-
-  const data = await fetchJson<{ results: NamedResource[] }>(
-    `${BASE}/generation?limit=9&offset=0`
-  );
-
-  const items: GenerationListItem[] = data.results.map((r) => ({
-    id: idFromUrl(r.url),
-    name: r.name,
-  }));
-
-  await cacheSet(cacheKey, items);
-  return items;
-}
-
-// ─── Generation detail ────────────────────────────────────────────────────────
-
-export async function fetchGenerationDetail(id: number): Promise<GenerationDetail> {
-  const cacheKey = `@pokedex/generation_${id}`;
-
-  const cached = await cacheGet<GenerationDetail>(cacheKey);
-  if (cached) return cached;
-
-  const data = await fetchJson<GenerationDetail>(`${BASE}/generation/${id}`);
-  await cacheSet(cacheKey, data);
-  return data;
-}
-
-// ─── Pokémon by generation (paginated from species list) ──────────────────────
-
-export async function fetchPokemonByGeneration(
-  generationId: number,
-  page: number,
-  prefetchedDetail?: GenerationDetail
-): Promise<{ items: PokemonListItem[]; total: number }> {
-  const cacheKey = `@pokedex/gen_pokemon_${generationId}_page_${page}`;
-  const totalKey = `@pokedex/gen_pokemon_${generationId}_total`;
-
-  const cachedItems = await cacheGet<PokemonListItem[]>(cacheKey);
-  const cachedTotal = await cacheGet<number>(totalKey);
-  if (cachedItems && cachedTotal !== null) {
-    return { items: cachedItems, total: cachedTotal };
-  }
-
-  const gen = prefetchedDetail ?? await fetchGenerationDetail(generationId);
-  const total = gen.pokemon_species.length;
-
-  // Species are not returned in national dex order — sort by id extracted from url
-  const sorted = [...gen.pokemon_species].sort(
-    (a, b) => idFromUrl(a.url) - idFromUrl(b.url)
-  );
-
-  const offset = (page - 1) * PAGE_SIZE;
-  const pageSpecies = sorted.slice(offset, offset + PAGE_SIZE);
-
-  const items: PokemonListItem[] = pageSpecies.map((s) => {
-    const id = idFromUrl(s.url);
-    return { id, name: s.name, sprite: spriteUrl(id) };
+export function fetchPokemonDetail(id: number): Promise<PokemonDetail> {
+  return cached(`pokemon_${id}`, async () => {
+    const d = await fetchJson<any>(`${BASE}/pokemon/${id}`);
+    return {
+      id: d.id,
+      name: d.name,
+      height: d.height,
+      weight: d.weight,
+      artwork: d.sprites.other?.["official-artwork"]?.front_default ?? d.sprites.front_default ?? null,
+      types: d.types.map((t: any) => t.type.name),
+      stats: d.stats.map((s: any) => ({ name: s.stat.name, value: s.base_stat })),
+      abilities: d.abilities.map((a: any) => ({ name: a.ability.name, hidden: a.is_hidden })),
+    };
   });
-
-  await cacheSet(cacheKey, items);
-  await cacheSet(totalKey, total);
-  return { items, total };
 }
 
-// ─── Search by name ───────────────────────────────────────────────────────────
+// ─── Pokémon species (flavor text, genus, evolution link) ─────────────────────
 
-export async function searchPokemonByName(query: string): Promise<PokemonListItem[]> {
-  if (!query.trim()) return [];
-  try {
-    const detail = await fetchPokemonDetail(
-      // PokéAPI accepts name as id
-      query.toLowerCase() as unknown as number
-    );
-    const sprite =
-      detail.sprites.front_default ??
-      detail.sprites.other["official-artwork"].front_default ??
-      spriteUrl(detail.id);
-    return [{ id: detail.id, name: detail.name, sprite }];
-  } catch {
-    return [];
-  }
+export function fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
+  return cached(`species_${id}`, async () => {
+    const s = await fetchJson<any>(`${BASE}/pokemon-species/${id}`);
+    // Deduplicated english flavor texts keyed by version name
+    const seen = new Set<string>();
+    const flavorTexts: PokemonSpecies["flavorTexts"] = [];
+    for (const e of s.flavor_text_entries) {
+      if (e.language.name !== "en" || seen.has(e.version.name)) continue;
+      seen.add(e.version.name);
+      flavorTexts.push({ version: e.version.name, text: e.flavor_text.replace(/\f|\n/g, " ") });
+    }
+    return {
+      id: s.id,
+      genus: s.genera.find((g: any) => g.language.name === "en")?.genus ?? null,
+      flavorTexts,
+      evolutionChainUrl: s.evolution_chain?.url ?? null,
+    };
+  });
 }
 
-// ─── Search by type ───────────────────────────────────────────────────────────
+// ─── Evolution chain ──────────────────────────────────────────────────────────
 
-export async function fetchPokemonByType(typeName: string): Promise<PokemonListItem[]> {
-  const cacheKey = `@pokedex/type_${typeName.toLowerCase()}`;
+export function fetchEvolutionChain(url: string): Promise<EvolutionStages> {
+  return cached(`evolution_${idFromUrl(url)}`, async () => {
+    const data = await fetchJson<any>(url);
+    const stages: EvolutionStages = [];
+    let level = [data.chain];
+    while (level.length) {
+      stages.push(level.map((n: any) => ({ id: idFromUrl(n.species.url), name: n.species.name })));
+      level = level.flatMap((n: any) => n.evolves_to);
+    }
+    return stages;
+  });
+}
 
-  const cached = await cacheGet<PokemonListItem[]>(cacheKey);
-  if (cached) return cached.map((item) => ({ ...item, sprite: spriteUrl(item.id) }));
+// ─── Generations ──────────────────────────────────────────────────────────────
 
-  const data = await fetchJson<TypeDetail>(
-    `${BASE}/type/${typeName.toLowerCase()}`
-  );
+export function fetchGenerations(): Promise<GenerationListItem[]> {
+  return cached("generations", async () => {
+    const data = await fetchJson<{ results: NamedResource[] }>(`${BASE}/generation`);
+    return data.results.map((r) => ({ id: idFromUrl(r.url), name: r.name }));
+  });
+}
 
-  const items: PokemonListItem[] = data.pokemon
-    .map((entry) => {
-      const id = idFromUrl(entry.pokemon.url);
-      return { id, name: entry.pokemon.name, sprite: spriteUrl(id) };
-    })
-    .sort((a, b) => a.id - b.id);
+export function fetchGenerationDetail(id: number): Promise<GenerationDetail> {
+  return cached(`generation_${id}`, async () => {
+    const g = await fetchJson<any>(`${BASE}/generation/${id}`);
+    return {
+      id: g.id,
+      region: g.main_region.name,
+      games: g.version_groups.map((vg: NamedResource) => vg.name.replace(/-/g, " ")),
+      // Species are not returned in national dex order
+      speciesIds: g.pokemon_species.map((s: NamedResource) => idFromUrl(s.url)).sort((a: number, b: number) => a - b),
+    };
+  });
+}
 
-  await cacheSet(cacheKey, items);
-  return items;
+// ─── Pokémon ids by type ──────────────────────────────────────────────────────
+
+export function fetchPokemonIdsByType(typeName: string): Promise<number[]> {
+  return cached(`type_${typeName}`, async () => {
+    const data = await fetchJson<{ pokemon: { pokemon: NamedResource }[] }>(`${BASE}/type/${typeName}`);
+    return data.pokemon.map((e) => idFromUrl(e.pokemon.url));
+  });
 }
