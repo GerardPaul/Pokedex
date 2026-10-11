@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { useSelection } from "@/context/SelectionContext";
 import { PokemonGrid } from "@/components/PokemonGrid";
 import { useAsync } from "@/hooks/useAsync";

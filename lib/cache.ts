@@ -48,13 +48,13 @@ async function cacheKeys(): Promise<string[]> {
 
 /** Approximate bytes used by cached API data. */
 export async function cacheSize(): Promise<number> {
-  const values = await AsyncStorage.getMany(await cacheKeys());
-  return Object.values(values).reduce((sum, v) => sum + (v?.length ?? 0), 0);
+  const entries = await AsyncStorage.multiGet(await cacheKeys());
+  return entries.reduce((sum, [, v]) => sum + (v?.length ?? 0), 0);
 }
 
 export async function clearCache(): Promise<void> {
   memory.clear();
-  await AsyncStorage.removeMany(await cacheKeys());
+  await AsyncStorage.multiRemove(await cacheKeys());
   await Image.clearDiskCache().catch(() => {});
   await Image.clearMemoryCache().catch(() => {});
 }
