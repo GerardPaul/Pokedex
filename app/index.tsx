@@ -1,14 +1,15 @@
-import { View, Text, Pressable, ScrollView } from "react-native";
+import { useEffect, useRef } from "react";
+import { Animated, View, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { Image } from "expo-image";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail } from "@/lib/pokeapi";
 import { TYPE_COLORS } from "@/lib/typeColors";
+import { BattlePlatform, PixelButton, Sprite } from "@/components/pixel";
 
 const QUICK_LINKS = [
-  { label: "Pokédex", route: "/pokemon" },
-  { label: "Generations", route: "/generations" },
-  { label: "Favorites", route: "/favorites" },
+  { label: "POKéDEX", route: "/pokemon" },
+  { label: "GENERATIONS", route: "/generations" },
+  { label: "FAVORITES", route: "/favorites" },
 ];
 
 // Same Pokémon for everyone all day, changes at local midnight
@@ -19,57 +20,80 @@ async function fetchPokemonOfTheDay() {
   return fetchPokemonDetail(all[day % all.length].id);
 }
 
+/** The blinking ▼ "press to continue" marker from the games' dialogue boxes. */
+function BlinkingArrow() {
+  const opacity = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    const blink = Animated.loop(
+      Animated.sequence([
+        Animated.timing(opacity, { toValue: 0, duration: 0, delay: 500, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 1, duration: 0, delay: 500, useNativeDriver: true }),
+      ])
+    );
+    blink.start();
+    return () => blink.stop();
+  }, [opacity]);
+  return (
+    // Animated.Text doesn't take NativeWind classes, so style it directly
+    <Animated.Text style={{ opacity, alignSelf: "flex-end", fontFamily: "PressStart2P", fontSize: 10, color: "#E3350D" }}>
+      ▼
+    </Animated.Text>
+  );
+}
+
 export default function IndexScreen() {
   const { data: daily } = useAsync(fetchPokemonOfTheDay, []);
   const color = daily ? TYPE_COLORS[daily.types[0]] ?? "#94a3b8" : "#94a3b8";
 
   return (
-    <ScrollView className="flex-1 bg-slate-100" contentContainerStyle={{ flexGrow: 1, padding: 24, alignItems: "center", justifyContent: "center" }}>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1, padding: 20, alignItems: "center", justifyContent: "center" }}
+      showsVerticalScrollIndicator={false}
+    >
       <Text
-        className="font-PokemonSolid text-red-600 tracking-widest text-center text-2xl sm:text-4xl"
-        style={{ lineHeight: 50 }}
+        className="font-PokemonSolid text-dex-red tracking-widest text-center text-4xl"
+        style={{ lineHeight: 56, textShadowColor: "#3B4CCA", textShadowOffset: { width: 3, height: 3 }, textShadowRadius: 0 }}
         adjustsFontSizeToFit
-        numberOfLines={3}
+        numberOfLines={1}
       >
-        Welcome to the Compendeon!
+        Compendeon
       </Text>
+      <Text className="font-Pixel text-[11px] text-ink mt-1">POKéDEX</Text>
 
       {daily && (
-        <Pressable
-          className="w-full max-w-sm mt-4 rounded-2xl p-4 flex-row items-center active:opacity-80 border"
-          style={{ backgroundColor: color + "22", borderColor: color + "66" }}
-          onPress={() => router.push(`/pokemon/${daily.id}` as any)}
-          accessibilityLabel={`Pokémon of the day: ${daily.name}`}
-          accessibilityRole="button"
-        >
-          <Image
-            source={{ uri: daily.artwork ?? undefined }}
-            style={{ width: 88, height: 88 }}
-            contentFit="contain"
-            cachePolicy="memory-disk"
-          />
-          <View className="ml-3 flex-1">
-            <Text className="text-[12px] text-slate-500 font-SpaceMono uppercase tracking-widest">
-              Pokémon of the day
-            </Text>
-            <Text className="text-xl font-PokemonSolid capitalize text-slate-800 tracking-widest mt-1">
-              {daily.name}
-            </Text>
-            <Text className="text-[13px] text-slate-500 font-SpaceMono">#{String(daily.id).padStart(3, "0")}</Text>
+        <View className="w-full max-w-sm items-center mt-6">
+          <View style={{ height: 130, justifyContent: "flex-end", zIndex: 1 }}>
+            <Sprite id={daily.id} size={120} />
           </View>
-        </Pressable>
+          <View style={{ marginTop: -20 }}>
+            <BattlePlatform color={color} width={160} />
+          </View>
+
+          <PixelButton
+            containerClassName="w-full mt-4"
+            className="px-4 pt-3 pb-2"
+            onPress={() => router.push(`/pokemon/${daily.id}` as any)}
+            accessibilityLabel={`Pokémon of the day: ${daily.name}. Open details`}
+          >
+            <Text className="font-PixelBody text-xl text-ink">
+              A wild <Text className="font-Pixel text-[13px] uppercase text-dex-red">{daily.name}</Text> appeared!
+            </Text>
+            <Text className="font-PixelBody text-base text-ink/60 mt-1">Pokémon of the day</Text>
+            <BlinkingArrow />
+          </PixelButton>
+        </View>
       )}
 
-      <View className="flex-row flex-wrap justify-center gap-2 mt-4">
+      <View className="w-full max-w-sm mt-5 gap-1">
         {QUICK_LINKS.map((link) => (
-          <Pressable
+          <PixelButton
             key={link.route}
-            className="px-4 py-2 rounded-full bg-white border border-slate-200 active:bg-slate-200"
+            className="px-4 py-3"
             onPress={() => router.push(link.route as any)}
-            accessibilityRole="button"
+            accessibilityLabel={`Open ${link.label}`}
           >
-            <Text className="font-SpaceMono text-sm text-slate-700">{link.label}</Text>
-          </Pressable>
+            <Text className="font-Pixel text-[12px] text-ink">▶ {link.label}</Text>
+          </PixelButton>
         ))}
       </View>
     </ScrollView>

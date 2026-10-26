@@ -1,6 +1,7 @@
 import { memo } from "react";
-import { Text, Pressable } from "react-native";
+import { Text, View } from "react-native";
 import { Image } from "expo-image";
+import { PixelButton } from "@/components/pixel";
 import type { PokemonListItem } from "@/lib/pokeapi";
 
 interface PokemonCardProps {
@@ -11,29 +12,29 @@ interface PokemonCardProps {
 }
 
 export const PokemonCard = memo(function PokemonCard({ pokemon, onPress, favorite, tint }: PokemonCardProps) {
-  const paddedId = String(pokemon.id).padStart(3, "0");
-
   return (
-    <Pressable
-      className="w-[30%] m-[1.5%] bg-white rounded-xl p-2 items-center active:opacity-70 border border-slate-200"
-      style={tint ? { backgroundColor: tint + "1A", borderColor: tint + "55" } : undefined}
+    <PixelButton
+      containerClassName="w-1/3 p-1"
+      className="items-center px-1 pt-1 pb-2"
+      tint={tint ? tint + "26" : undefined}
       onPress={() => onPress(pokemon)}
       accessibilityLabel={`${pokemon.name}, number ${pokemon.id}${favorite ? ", favorite" : ""}`}
-      accessibilityRole="button"
     >
-      {favorite && <Text className="absolute top-1 right-1.5 text-[12px] text-yellow-500">★</Text>}
+      <View className="w-full flex-row justify-between items-center px-0.5">
+        <Text className="font-Pixel text-[8px] text-ink/60">#{String(pokemon.id).padStart(3, "0")}</Text>
+        {favorite && <Text className="text-[12px] text-hp-yellow">★</Text>}
+      </View>
       <Image
         source={{ uri: pokemon.sprite }}
-        style={{ width: 64, height: 64 }}
+        style={{ width: 72, height: 72 }}
         contentFit="contain"
         cachePolicy="memory-disk"
-        transition={200}
+        transition={150}
         recyclingKey={`pokemon-${pokemon.id}`}
       />
-      <Text className="text-[12px] text-slate-400 font-SpaceMono mt-1">#{paddedId}</Text>
-      <Text className="text-[13px] text-slate-700 font-SpaceMono text-center capitalize" numberOfLines={1}>
+      <Text className="font-PixelBody text-base text-ink text-center capitalize" numberOfLines={1}>
         {pokemon.name}
       </Text>
-    </Pressable>
+    </PixelButton>
   );
 });

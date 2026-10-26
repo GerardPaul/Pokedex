@@ -1,9 +1,12 @@
-import { View, Text, Pressable } from "react-native";
+import { View, Text } from "react-native";
 import { Image } from "expo-image";
+import { PixelButton } from "@/components/pixel";
 import { spriteUrlFromId, type GenerationListItem } from "@/lib/pokeapi";
 
+export const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
+
 // Static per-generation data: region, accent color and the grass/fire/water starters
-const GEN_INFO: Record<number, { region: string; accent: string; starters: number[] }> = {
+export const GEN_INFO: Record<number, { region: string; accent: string; starters: number[] }> = {
   1: { region: "Kanto", accent: "#ef4444", starters: [1, 4, 7] },
   2: { region: "Johto", accent: "#eab308", starters: [152, 155, 158] },
   3: { region: "Hoenn", accent: "#10b981", starters: [252, 255, 258] },
@@ -26,28 +29,28 @@ export function GenerationCard({ generation, onPress }: GenerationCardProps) {
   const accent = info?.accent ?? "#94a3b8";
 
   return (
-    <Pressable
-      className="w-[46%] m-[2%] bg-white rounded-xl overflow-hidden items-center active:opacity-70 border border-slate-200"
+    <PixelButton
+      containerClassName="w-1/2 p-1.5"
+      className="items-center"
       onPress={() => onPress(generation)}
       accessibilityLabel={`Generation ${generation.id}, ${region} region`}
-      accessibilityRole="button"
     >
-      <View className="h-1.5 w-full" style={{ backgroundColor: accent }} />
-      <View className="flex-row mt-3">
+      <View className="h-2 w-full" style={{ backgroundColor: accent }} />
+      <View className="flex-row mt-2">
         {(info?.starters ?? []).map((id) => (
           <Image
             key={id}
             source={{ uri: spriteUrlFromId(id) }}
-            style={{ width: 40, height: 40 }}
+            style={{ width: 44, height: 44 }}
             contentFit="contain"
             cachePolicy="memory-disk"
           />
         ))}
       </View>
-      <Text className="text-base font-PokemonSolid tracking-widest text-slate-800 mt-1">Gen {generation.id}</Text>
-      <Text className="text-sm font-SpaceMono mt-1 mb-3" style={{ color: accent }}>
+      <Text className="font-Pixel text-[13px] text-ink mt-1">GEN {ROMAN[generation.id] ?? generation.id}</Text>
+      <Text className="font-PixelBody text-lg mt-1 mb-2" style={{ color: accent }}>
         {region}
       </Text>
-    </Pressable>
+    </PixelButton>
   );
 }

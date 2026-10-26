@@ -56,13 +56,20 @@ function idFromUrl(url: string): number {
   return Number(parts[parts.length - 1]);
 }
 
-export function spriteUrlFromId(id: number): string {
-  return `${SPRITES}/${id}.png`;
+export function spriteUrlFromId(id: number, shiny = false): string {
+  return `${SPRITES}/${shiny ? "shiny/" : ""}${id}.png`;
 }
 
 export function shinyArtworkUrlFromId(id: number): string {
   return `${SPRITES}/other/official-artwork/shiny/${id}.png`;
 }
+
+/** Animated Showdown GIF. Missing for the newest Pokémon (~1010+), so pair with a static fallback. */
+export function animatedSpriteUrl(id: number, shiny = false): string {
+  return `${SPRITES}/other/showdown/${shiny ? "shiny/" : ""}${id}.gif`;
+}
+
+export const pokeballUrl = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png";
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);

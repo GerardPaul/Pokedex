@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { View, Text, Pressable, Alert, Platform } from "react-native";
+import { View, Text, Alert, Platform } from "react-native";
 import { useAsync } from "@/hooks/useAsync";
 import { cacheSize, clearCache } from "@/lib/cache";
 import { useFavorites } from "@/context/FavoritesContext";
+import { PixelBox, PixelButton, ScreenHeader } from "@/components/pixel";
 
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -25,36 +26,35 @@ export default function SettingsScreen() {
     }
     Alert.alert("Clear cache?", message, [
       { text: "Cancel", style: "cancel" },
-      {
-        text: "Clear",
-        style: "destructive",
-        onPress: clear,
-      },
+      { text: "Clear", style: "destructive", onPress: clear },
     ]);
   }
 
   return (
-    <View className="flex-1 bg-slate-100 px-6 pt-8">
-      <Text className="text-2xl font-PokemonSolid text-slate-800 tracking-widest">SETTINGS</Text>
+    <View className="flex-1">
+      <ScreenHeader title="OPTIONS" />
+      <View className="px-3 mt-2 gap-2">
+        <PixelBox className="p-4">
+          <Text className="font-Pixel text-[11px] text-ink">SAVE DATA</Text>
+          <Text className="font-PixelBody text-2xl text-ink mt-2">
+            {size.loading ? "…" : size.data !== null ? formatBytes(size.data) : "Unknown"}
+          </Text>
+          <Text className="font-PixelBody text-base text-ink/60">Cached Pokémon data. Clearing also removes cached images.</Text>
+          <PixelButton
+            containerClassName="self-start mt-3"
+            className="px-3 py-2"
+            tint="#E3350D"
+            onPress={confirmClear}
+            accessibilityLabel="Clear cache"
+          >
+            <Text className="font-Pixel text-[10px] text-white">CLEAR CACHE</Text>
+          </PixelButton>
+        </PixelBox>
 
-      <View className="bg-white rounded-xl border border-slate-200 mt-6 p-4">
-        <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Cached data</Text>
-        <Text className="text-base text-slate-700 font-SpaceMono mt-1">
-          {size.loading ? "…" : size.data !== null ? formatBytes(size.data) : "Unknown"}
-        </Text>
-        <Text className="text-[13px] text-slate-400 font-SpaceMono mt-1">Clearing also removes cached images.</Text>
-        <Pressable
-          className="mt-3 self-start px-4 py-2 rounded-full bg-red-600 active:bg-red-700"
-          onPress={confirmClear}
-          accessibilityRole="button"
-        >
-          <Text className="text-white font-SpaceMono text-sm uppercase tracking-widest">Clear cache</Text>
-        </Pressable>
-      </View>
-
-      <View className="bg-white rounded-xl border border-slate-200 mt-3 p-4">
-        <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Favorites</Text>
-        <Text className="text-base text-slate-700 font-SpaceMono mt-1">{favorites.size}</Text>
+        <PixelBox className="p-4 flex-row items-center justify-between">
+          <Text className="font-Pixel text-[11px] text-ink">FAVORITES</Text>
+          <Text className="font-Pixel text-[13px] text-ink">★ {favorites.size}</Text>
+        </PixelBox>
       </View>
     </View>
   );

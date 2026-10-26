@@ -1,5 +1,5 @@
-import { View, TextInput, Pressable } from "react-native";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { TextInput, Pressable, Text } from "react-native";
+import { PixelBox } from "@/components/pixel";
 
 interface SearchBarProps {
   value: string;
@@ -7,30 +7,26 @@ interface SearchBarProps {
   placeholder?: string;
 }
 
-export function SearchBar({ value, onChangeText, placeholder = "Search name, #number or type..." }: SearchBarProps) {
+export function SearchBar({ value, onChangeText, placeholder = "Search name, #no. or type" }: SearchBarProps) {
   return (
-    <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-3 py-2 mx-3 my-2">
-      <Ionicons name="search" size={16} color="#94a3b8" />
+    <PixelBox containerClassName="mx-3 mt-2" className="flex-row items-center px-3 py-1.5">
+      <Text className="font-Pixel text-[12px] text-dex-red mr-2">▶</Text>
       <TextInput
-        className="flex-1 ml-2 text-base text-slate-700 font-SpaceMono"
+        className="flex-1 font-PixelBody text-lg text-ink py-1"
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#94a3b8"
+        placeholderTextColor="#9A9284"
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="search"
         accessibilityLabel="Search Pokémon"
       />
       {value.length > 0 && (
-        <Pressable
-          onPress={() => onChangeText("")}
-          accessibilityLabel="Clear search"
-          hitSlop={8}
-        >
-          <Ionicons name="close-circle" size={16} color="#94a3b8" />
+        <Pressable onPress={() => onChangeText("")} accessibilityLabel="Clear search" hitSlop={10}>
+          <Text className="font-Pixel text-[12px] text-ink">✕</Text>
         </Pressable>
       )}
-    </View>
+    </PixelBox>
   );
 }

@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Pressable } from "react-native";
+import { View, Text, Pressable, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { Image } from "expo-image";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { useSelection } from "@/context/SelectionContext";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useAsync } from "@/hooks/useAsync";
-import { fetchAllPokemon, shinyArtworkUrlFromId } from "@/lib/pokeapi";
-import { TYPE_COLORS, typeIconUrl } from "@/lib/typeColors";
+import { fetchAllPokemon, fetchPokemonDetail, fetchPokemonSpecies } from "@/lib/pokeapi";
+import { TYPE_COLORS } from "@/lib/typeColors";
+import {
+  BattlePlatform,
+  Message,
+  PixelBox,
+  PixelButton,
+  PixelLoader,
+  ScreenHeader,
+  Sprite,
+  TypeBadge,
+  tap,
+} from "@/components/pixel";
+import { PokemonInfoTabs } from "@/components/PokemonInfoTabs";
 
 interface PokemonDetailViewProps {
   id: number;
@@ -17,144 +26,120 @@ interface PokemonDetailViewProps {
 }
 
 export function PokemonDetailView({ id, ids, routeFor }: PokemonDetailViewProps) {
-  const { selectPokemon, pokemonDetail, pokemonSpecies, pokemonDetailLoading, pokemonDetailError } = useSelection();
   const { isFavorite, toggleFavorite } = useFavorites();
   const all = useAsync(ids ? null : fetchAllPokemon, [!!ids]);
-  const [showShiny, setShowShiny] = useState(false);
+  const data = useAsync(() => Promise.all([fetchPokemonDetail(id), fetchPokemonSpecies(id)]), [id]);
+  const [shiny, setShiny] = useState(false);
+  useEffect(() => setShiny(false), [id]);
 
-  useEffect(() => {
-    selectPokemon(id);
-    setShowShiny(false);
-  }, [id, selectPokemon]);
+  const favorite = isFavorite(id);
+  const header = (
+    <ScreenHeader
+      back
+      title={`#${String(id).padStart(3, "0")}`}
+      right={
+        <Pressable
+          onPress={() => {
+            tap();
+            toggleFavorite(id);
+          }}
+          hitSlop={10}
+          accessibilityRole="button"
+          accessibilityLabel={favorite ? "Remove from favorites" : "Add to favorites"}
+        >
+          <Text className={`text-xl ${favorite ? "text-hp-yellow" : "text-shade"}`}>★</Text>
+        </Pressable>
+      }
+    />
+  );
 
-  // Context may still hold the previous Pokémon for a frame after navigating
-  const detail = pokemonDetail?.id === id ? pokemonDetail : null;
-
-  if (pokemonDetailLoading || (!detail && !pokemonDetailError)) {
+  // useAsync keeps the previous result for a frame after `id` changes
+  const ready = data.data && data.data[0].id === id ? data.data : null;
+  if (!ready) {
     return (
-      <View className="flex-1 items-center justify-center bg-slate-100">
-        <ActivityIndicator size="large" color="#DC2626" />
-        <Text className="text-slate-400 font-SpaceMono text-sm mt-3">Loading...</Text>
+      <View className="flex-1">
+        {header}
+        {data.error ? <Message text={data.error} /> : <PixelLoader />}
       </View>
     );
   }
 
-  if (!detail) {
-    return (
-      <View className="flex-1 items-center justify-center bg-slate-100 px-6">
-        <Text className="text-slate-500 font-SpaceMono text-sm text-center">
-          {pokemonDetailError ?? "Could not load Pokémon."}
-        </Text>
-      </View>
-    );
-  }
+  const [detail, species] = ready;
+  const color = TYPE_COLORS[detail.types[0]] ?? "#94a3b8";
 
   const stepIds = ids ?? all.data?.map((p) => p.id) ?? [];
   const index = stepIds.indexOf(id);
   const prevId = index > 0 ? stepIds[index - 1] : null;
   const nextId = index >= 0 && index < stepIds.length - 1 ? stepIds[index + 1] : null;
 
-  const color = TYPE_COLORS[detail.types[0]] ?? "#94a3b8";
-  const favorite = isFavorite(id);
-  const artworkUri = showShiny ? shinyArtworkUrlFromId(id) : detail.artwork ?? "";
-
   return (
-    <View className="flex-1 bg-slate-100 items-center justify-center px-6">
-      {/* Type-tinted backdrop */}
-      <View className="absolute inset-0" style={{ backgroundColor: color, opacity: 0.12 }} />
-
-      {/* Favorite */}
-      <Pressable
-        className="absolute top-3 right-3 p-2"
-        onPress={() => toggleFavorite(id)}
-        accessibilityLabel={favorite ? "Remove from favorites" : "Add to favorites"}
-        accessibilityRole="button"
-        hitSlop={8}
-      >
-        <Ionicons name={favorite ? "star" : "star-outline"} size={24} color={favorite ? "#eab308" : "#64748b"} />
-      </Pressable>
-
-      <View className="flex-row items-center">
-        <StepButton icon="chevron-back" targetId={prevId} routeFor={routeFor} label="Previous Pokémon" />
-        {/* Artwork centered inside its type-colored circle */}
-        <View className="items-center justify-center" style={{ width: 230, height: 230 }}>
-          <View
-            className="absolute inset-0 rounded-full"
-            style={{ backgroundColor: color, opacity: 0.18 }}
-          />
-          <Image
-            source={{ uri: artworkUri }}
-            style={{ width: 190, height: 190 }}
-            contentFit="contain"
-            cachePolicy="memory-disk"
-            transition={150}
-            recyclingKey={`${showShiny ? "shiny" : "main"}-${id}`}
-          />
+    <View className="flex-1">
+      {header}
+      <ScrollView contentContainerStyle={{ paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
+        {/* Battle-screen hero */}
+        <View className="px-3 mt-2">
+          <PixelBox tint={color + "33"} className="py-4 px-2 flex-row items-center justify-between">
+            <StepButton label="Previous Pokémon" arrow="◀" targetId={prevId} routeFor={routeFor} />
+            <View className="items-center">
+              <View style={{ height: 150, justifyContent: "flex-end", zIndex: 1 }}>
+                <Sprite id={id} shiny={shiny} size={140} />
+              </View>
+              <View style={{ marginTop: -22 }}>
+                <BattlePlatform color={color} width={170} />
+              </View>
+            </View>
+            <StepButton label="Next Pokémon" arrow="▶" targetId={nextId} routeFor={routeFor} />
+          </PixelBox>
         </View>
-        <StepButton icon="chevron-forward" targetId={nextId} routeFor={routeFor} label="Next Pokémon" />
-      </View>
 
-      <Text className="text-[13px] text-slate-500 font-SpaceMono mt-2">#{String(id).padStart(3, "0")}</Text>
-      <Text className="text-3xl font-PokemonSolid capitalize text-slate-800 tracking-widest mt-1">{detail.name}</Text>
-      {pokemonSpecies?.genus && (
-        <Text className="text-sm text-slate-500 font-SpaceMono mt-1">{pokemonSpecies.genus}</Text>
-      )}
-
-      {/* Types */}
-      <View className="flex-row mt-3 gap-2">
-        {detail.types.map((t) => (
-          <View
-            key={t}
-            className="flex-row items-center gap-1.5 pl-2 pr-4 py-1.5 rounded-full"
-            style={{ backgroundColor: TYPE_COLORS[t] ?? "#94a3b8" }}
-          >
-            <Image source={{ uri: typeIconUrl(t) }} style={{ width: 16, height: 16 }} cachePolicy="memory-disk" />
-            <Text className="text-white text-sm font-SpaceMono capitalize">{t}</Text>
+        {/* Name plate */}
+        <View className="items-center mt-3 px-4">
+          <Text className="font-Pixel text-lg text-ink uppercase text-center">{detail.name}</Text>
+          {species.genus && <Text className="font-PixelBody text-lg text-ink/70 mt-1">{species.genus}</Text>}
+          <View className="flex-row gap-2 mt-3">
+            {detail.types.map((t) => (
+              <TypeBadge key={t} type={t} />
+            ))}
           </View>
-        ))}
-      </View>
+          <PixelButton
+            containerClassName="mt-3"
+            className="px-3 py-1.5"
+            tint={shiny ? "#F8D030" : undefined}
+            selected={shiny}
+            onPress={() => setShiny((v) => !v)}
+            accessibilityLabel="Toggle shiny"
+          >
+            <Text className="font-Pixel text-[10px] text-ink">✦ SHINY</Text>
+          </PixelButton>
+        </View>
 
-      {/* Shiny toggle */}
-      <Pressable
-        className={`flex-row items-center gap-1 mt-4 px-4 py-1.5 rounded-full border ${
-          showShiny ? "bg-yellow-400 border-yellow-400" : "bg-transparent border-slate-400"
-        }`}
-        onPress={() => setShowShiny((v) => !v)}
-        accessibilityLabel="Toggle shiny"
-        accessibilityRole="button"
-        accessibilityState={{ selected: showShiny }}
-      >
-        <Text
-          className={`font-SpaceMono text-sm uppercase tracking-widest ${showShiny ? "text-slate-900" : "text-slate-500"}`}
-        >
-          ✦ Shiny
-        </Text>
-      </Pressable>
+        <View className="mt-4">
+          <PokemonInfoTabs detail={detail} species={species} routeFor={routeFor} />
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 function StepButton({
-  icon,
+  label,
+  arrow,
   targetId,
   routeFor,
-  label,
 }: {
-  icon: "chevron-back" | "chevron-forward";
+  label: string;
+  arrow: string;
   targetId: number | null;
   routeFor: (id: number) => string;
-  label: string;
 }) {
   return (
-    <Pressable
-      className="p-2"
+    <PixelButton
+      className="px-2 py-2"
       disabled={targetId === null}
       onPress={() => targetId !== null && router.replace(routeFor(targetId) as any)}
       accessibilityLabel={label}
-      accessibilityRole="button"
-      hitSlop={8}
     >
-      <Ionicons name={icon} size={28} color={targetId === null ? "#cbd5e1" : "#475569"} />
-    </Pressable>
+      <Text className="font-Pixel text-[12px] text-ink">{arrow}</Text>
+    </PixelButton>
   );
 }
