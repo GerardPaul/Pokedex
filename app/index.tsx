@@ -3,7 +3,7 @@ import { Animated, View, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail } from "@/lib/pokeapi";
-import { GroundShadow, PixelButton, Sprite } from "@/components/pixel";
+import { PixelButton, Sprite } from "@/components/pixel";
 
 const QUICK_LINKS = [
   { label: "POKéDEX", route: "/pokemon" },
@@ -62,9 +62,6 @@ export default function IndexScreen() {
         <View className="w-full max-w-sm items-center mt-6">
           <View style={{ height: 130, justifyContent: "flex-end", zIndex: 1 }}>
             <Sprite id={daily.id} size={120} />
-          </View>
-          <View style={{ marginTop: -14 }}>
-            <GroundShadow width={110} />
           </View>
 
           <PixelButton

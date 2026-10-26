@@ -7,7 +7,6 @@ import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail, fetchPokemonSpecies, shinyArtworkUrlFromId } from "@/lib/pokeapi";
 import { TYPE_COLORS } from "@/lib/typeColors";
 import {
-  GroundShadow,
   Message,
   PixelBox,
   PixelButton,
@@ -116,21 +115,13 @@ export function PokemonDetailView({ id, ids, stepParam, routeFor }: PokemonDetai
               >
                 <CachedImage
                   uri={artwork}
-                  style={{ width: 170, height: 170, zIndex: 1 }}
+                  style={{ width: 170, height: 170 }}
                   contentFit="contain"
                   recyclingKey={`art-${detail.id}-${shiny}`}
                 />
-                <View style={{ marginTop: -16 }}>
-                  <GroundShadow width={90} />
-                </View>
                 {/* Small animated sprite beside the artwork */}
-                <View className="absolute right-0 bottom-0 items-center">
-                  <View style={{ zIndex: 1 }}>
-                    <Sprite id={detail.id} shiny={shiny} size={56} />
-                  </View>
-                  <View style={{ marginTop: -8 }}>
-                    <GroundShadow width={40} />
-                  </View>
+                <View className="absolute right-0 bottom-0">
+                  <Sprite id={detail.id} shiny={shiny} size={56} />
                 </View>
               </Animated.View>
             </View>

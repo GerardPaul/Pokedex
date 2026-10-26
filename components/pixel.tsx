@@ -194,10 +194,6 @@ export function Sprite({
   );
 }
 
-/** Soft dark oval under a Pokémon's feet. */
-export function GroundShadow({ width = 140 }: { width?: number }) {
-  return <View style={{ width, height: width * 0.2, borderRadius: width, backgroundColor: "rgba(30, 32, 48, 0.28)" }} />;
-}
 
 /** Bouncing Poké Ball loading indicator. */
 export function PixelLoader({ label = "Loading..." }: { label?: string }) {

@@ -6,7 +6,7 @@ import { useAsync } from "@/hooks/useAsync";
 import { fetchEvolutionChain, type PokemonDetail, type PokemonSpecies } from "@/lib/pokeapi";
 
 type Tab = "info" | "dex" | "stats" | "evo";
-const TABS: Tab[] = ["info", "dex", "stats", "evo"];
+const TABS: Tab[] = ["stats", "info", "dex", "evo"];
 
 const STAT_LABELS: Record<string, string> = {
   hp: "HP",
@@ -24,7 +24,7 @@ interface PokemonInfoTabsProps {
 }
 
 export function PokemonInfoTabs({ detail, species, routeFor }: PokemonInfoTabsProps) {
-  const [tab, setTab] = useState<Tab>("info");
+  const [tab, setTab] = useState<Tab>(TABS[0]);
 
   return (
     <View className="px-3">
