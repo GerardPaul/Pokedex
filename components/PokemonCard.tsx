@@ -21,7 +21,7 @@ export const PokemonCard = memo(function PokemonCard({ pokemon, onPress, favorit
       accessibilityLabel={`${pokemon.name}, number ${pokemon.id}${favorite ? ", favorite" : ""}`}
       accessibilityRole="button"
     >
-      {favorite && <Text className="absolute top-1 right-1.5 text-[10px] text-yellow-500">★</Text>}
+      {favorite && <Text className="absolute top-1 right-1.5 text-[12px] text-yellow-500">★</Text>}
       <Image
         source={{ uri: pokemon.sprite }}
         style={{ width: 64, height: 64 }}
@@ -30,8 +30,8 @@ export const PokemonCard = memo(function PokemonCard({ pokemon, onPress, favorit
         transition={200}
         recyclingKey={`pokemon-${pokemon.id}`}
       />
-      <Text className="text-[10px] text-slate-400 font-SpaceMono mt-1">#{paddedId}</Text>
-      <Text className="text-[11px] text-slate-700 font-SpaceMono text-center capitalize" numberOfLines={1}>
+      <Text className="text-[12px] text-slate-400 font-SpaceMono mt-1">#{paddedId}</Text>
+      <Text className="text-[13px] text-slate-700 font-SpaceMono text-center capitalize" numberOfLines={1}>
         {pokemon.name}
       </Text>
     </Pressable>

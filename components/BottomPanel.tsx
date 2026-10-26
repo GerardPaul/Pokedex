@@ -22,7 +22,7 @@ function EvolutionChain({ url, currentId }: { url: string | null; currentId: num
 
   if (loading) return <ActivityIndicator size="small" color="#DC2626" />;
   if (!stages || stages.length < 2) {
-    return <Text className="text-sm text-slate-400 font-SpaceMono italic">Does not evolve.</Text>;
+    return <Text className="text-base text-slate-400 font-SpaceMono italic">Does not evolve.</Text>;
   }
 
   return (
@@ -45,7 +45,7 @@ function EvolutionChain({ url, currentId }: { url: string | null; currentId: num
                   cachePolicy="memory-disk"
                 />
                 <Text
-                  className={`text-[10px] font-SpaceMono capitalize ${
+                  className={`text-[12px] font-SpaceMono capitalize ${
                     p.id === currentId ? "text-red-500" : "text-slate-600"
                   }`}
                 >
@@ -78,7 +78,7 @@ function PokemonDetailPanel() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="small" color="#DC2626" />
-        <Text className="text-slate-400 font-SpaceMono text-sm mt-2">Loading...</Text>
+        <Text className="text-slate-400 font-SpaceMono text-base mt-2">Loading...</Text>
       </View>
     );
   }
@@ -86,7 +86,7 @@ function PokemonDetailPanel() {
   if (error || !detail) {
     return (
       <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-slate-500 font-SpaceMono text-sm text-center">
+        <Text className="text-slate-500 font-SpaceMono text-base text-center">
           {error ?? "Could not load Pokémon details."}
         </Text>
       </View>
@@ -119,7 +119,7 @@ function PokemonDetailPanel() {
             accessibilityState={{ selected: activeTab === tab.key }}
           >
             <Text
-              className={`font-SpaceMono text-xs uppercase tracking-widest ${
+              className={`font-SpaceMono text-sm uppercase tracking-widest ${
                 activeTab === tab.key ? "text-red-500" : "text-slate-400"
               }`}
             >
@@ -135,25 +135,25 @@ function PokemonDetailPanel() {
           <View>
             <View className="flex-row gap-8">
               <View>
-                <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Height</Text>
-                <Text className="text-sm text-slate-700 font-SpaceMono mt-0.5">
+                <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Height</Text>
+                <Text className="text-base text-slate-700 font-SpaceMono mt-0.5">
                   {(detail.height / 10).toFixed(1)} m
                 </Text>
               </View>
               <View>
-                <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Weight</Text>
-                <Text className="text-sm text-slate-700 font-SpaceMono mt-0.5">
+                <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Weight</Text>
+                <Text className="text-base text-slate-700 font-SpaceMono mt-0.5">
                   {(detail.weight / 10).toFixed(1)} kg
                 </Text>
               </View>
             </View>
-            <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest mt-3 mb-1">
+            <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest mt-3 mb-1">
               Abilities
             </Text>
             <View className="flex-row flex-wrap gap-2">
               {detail.abilities.map((a) => (
                 <View key={a.name} className="bg-slate-100 rounded-lg px-2 py-1">
-                  <Text className="text-xs text-slate-600 font-SpaceMono capitalize">
+                  <Text className="text-sm text-slate-600 font-SpaceMono capitalize">
                     {a.name.replace(/-/g, " ")}
                     {a.hidden ? " (hidden)" : ""}
                   </Text>
@@ -181,7 +181,7 @@ function PokemonDetailPanel() {
                       isActive ? "bg-red-500 border-red-500" : "bg-transparent border-slate-300"
                     }`}
                   >
-                    <Text className={`font-SpaceMono text-xs capitalize ${isActive ? "text-white" : "text-slate-500"}`}>
+                    <Text className={`font-SpaceMono text-sm capitalize ${isActive ? "text-white" : "text-slate-500"}`}>
                       {entry.version.replace(/-/g, " ")}
                     </Text>
                   </Pressable>
@@ -190,9 +190,9 @@ function PokemonDetailPanel() {
             </ScrollView>
             {/* Description */}
             {activeDex ? (
-              <Text className="text-sm text-slate-600 font-SpaceMono leading-6 italic">{activeDex.text}</Text>
+              <Text className="text-base text-slate-600 font-SpaceMono leading-6 italic">{activeDex.text}</Text>
             ) : (
-              <Text className="text-sm text-slate-400 font-SpaceMono italic">No description available.</Text>
+              <Text className="text-base text-slate-400 font-SpaceMono italic">No description available.</Text>
             )}
           </View>
         )}
@@ -201,10 +201,10 @@ function PokemonDetailPanel() {
           <View>
             {detail.stats.map((s) => (
               <View key={s.name} className="flex-row items-center mb-1.5">
-                <Text className="text-xs text-slate-400 font-SpaceMono capitalize w-24">
+                <Text className="text-sm text-slate-400 font-SpaceMono capitalize w-32">
                   {s.name.replace(/-/g, " ")}
                 </Text>
-                <Text className="text-xs text-slate-700 font-SpaceMono w-8 text-right">{s.value}</Text>
+                <Text className="text-sm text-slate-700 font-SpaceMono w-10 text-right">{s.value}</Text>
                 <View className="flex-1 h-1.5 bg-slate-200 rounded-full ml-2">
                   <View
                     className="h-full rounded-full"
@@ -217,8 +217,8 @@ function PokemonDetailPanel() {
               </View>
             ))}
             <View className="flex-row items-center mt-1 pt-1.5 border-t border-slate-200">
-              <Text className="text-xs text-slate-500 font-SpaceMono uppercase w-24">Total</Text>
-              <Text className="text-xs text-slate-800 font-SpaceMono w-8 text-right">{statTotal}</Text>
+              <Text className="text-sm text-slate-500 font-SpaceMono uppercase w-32">Total</Text>
+              <Text className="text-sm text-slate-800 font-SpaceMono w-10 text-right">{statTotal}</Text>
             </View>
           </View>
         )}
@@ -238,7 +238,7 @@ function GenerationDetailPanel() {
     return (
       <View className="flex-1 items-center justify-center">
         <ActivityIndicator size="small" color="#DC2626" />
-        <Text className="text-slate-400 font-SpaceMono text-sm mt-2">Loading...</Text>
+        <Text className="text-slate-400 font-SpaceMono text-base mt-2">Loading...</Text>
       </View>
     );
   }
@@ -246,7 +246,7 @@ function GenerationDetailPanel() {
   if (error || !generation) {
     return (
       <View className="flex-1 items-center justify-center px-4">
-        <Text className="text-slate-500 font-SpaceMono text-sm text-center">
+        <Text className="text-slate-500 font-SpaceMono text-base text-center">
           {error ?? "Could not load generation details."}
         </Text>
       </View>
@@ -261,20 +261,20 @@ function GenerationDetailPanel() {
 
       <View className="flex-row mt-3 gap-4">
         <View>
-          <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Region</Text>
+          <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Region</Text>
           <Text className="text-base text-slate-700 font-SpaceMono capitalize mt-0.5">{generation.region}</Text>
         </View>
         <View>
-          <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Pokémon</Text>
+          <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Pokémon</Text>
           <Text className="text-base text-slate-700 font-SpaceMono mt-0.5">{generation.speciesIds.length}</Text>
         </View>
       </View>
 
-      <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest mt-3 mb-1">Games</Text>
+      <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest mt-3 mb-1">Games</Text>
       <View className="flex-row flex-wrap gap-2">
         {generation.games.map((game) => (
           <View key={game} className="bg-slate-100 rounded-lg px-2 py-1">
-            <Text className="text-xs text-slate-600 font-SpaceMono capitalize">{game}</Text>
+            <Text className="text-sm text-slate-600 font-SpaceMono capitalize">{game}</Text>
           </View>
         ))}
       </View>

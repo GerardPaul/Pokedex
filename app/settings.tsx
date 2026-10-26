@@ -38,22 +38,22 @@ export default function SettingsScreen() {
       <Text className="text-2xl font-PokemonSolid text-slate-800 tracking-widest">SETTINGS</Text>
 
       <View className="bg-white rounded-xl border border-slate-200 mt-6 p-4">
-        <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Cached data</Text>
+        <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Cached data</Text>
         <Text className="text-base text-slate-700 font-SpaceMono mt-1">
           {size.loading ? "…" : size.data !== null ? formatBytes(size.data) : "Unknown"}
         </Text>
-        <Text className="text-[11px] text-slate-400 font-SpaceMono mt-1">Clearing also removes cached images.</Text>
+        <Text className="text-[13px] text-slate-400 font-SpaceMono mt-1">Clearing also removes cached images.</Text>
         <Pressable
           className="mt-3 self-start px-4 py-2 rounded-full bg-red-600 active:bg-red-700"
           onPress={confirmClear}
           accessibilityRole="button"
         >
-          <Text className="text-white font-SpaceMono text-xs uppercase tracking-widest">Clear cache</Text>
+          <Text className="text-white font-SpaceMono text-sm uppercase tracking-widest">Clear cache</Text>
         </Pressable>
       </View>
 
       <View className="bg-white rounded-xl border border-slate-200 mt-3 p-4">
-        <Text className="text-[11px] text-slate-400 font-SpaceMono uppercase tracking-widest">Favorites</Text>
+        <Text className="text-[13px] text-slate-400 font-SpaceMono uppercase tracking-widest">Favorites</Text>
         <Text className="text-base text-slate-700 font-SpaceMono mt-1">{favorites.size}</Text>
       </View>
     </View>

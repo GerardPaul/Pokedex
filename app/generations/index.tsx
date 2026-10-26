@@ -19,7 +19,7 @@ export default function GenerationsScreen() {
     return (
       <View className="flex-1 items-center justify-center bg-slate-100">
         <ActivityIndicator size="large" color="#DC2626" />
-        <Text className="text-slate-400 font-SpaceMono text-xs mt-3">Loading generations...</Text>
+        <Text className="text-slate-400 font-SpaceMono text-sm mt-3">Loading generations...</Text>
       </View>
     );
   }
@@ -27,7 +27,7 @@ export default function GenerationsScreen() {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center bg-slate-100 px-6">
-        <Text className="text-slate-500 font-SpaceMono text-xs text-center">{error}</Text>
+        <Text className="text-slate-500 font-SpaceMono text-sm text-center">{error}</Text>
       </View>
     );
   }

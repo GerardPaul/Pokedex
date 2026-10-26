@@ -24,7 +24,7 @@ export default function IndexScreen() {
   const color = daily ? TYPE_COLORS[daily.types[0]] ?? "#94a3b8" : "#94a3b8";
 
   return (
-    <ScrollView className="flex-1 bg-slate-100" contentContainerStyle={{ padding: 24, alignItems: "center" }}>
+    <ScrollView className="flex-1 bg-slate-100" contentContainerStyle={{ flexGrow: 1, padding: 24, alignItems: "center", justifyContent: "center" }}>
       <Text
         className="font-PokemonSolid text-red-600 tracking-widest text-center text-2xl sm:text-4xl"
         style={{ lineHeight: 50 }}
@@ -49,13 +49,13 @@ export default function IndexScreen() {
             cachePolicy="memory-disk"
           />
           <View className="ml-3 flex-1">
-            <Text className="text-[10px] text-slate-500 font-SpaceMono uppercase tracking-widest">
+            <Text className="text-[12px] text-slate-500 font-SpaceMono uppercase tracking-widest">
               Pokémon of the day
             </Text>
             <Text className="text-xl font-PokemonSolid capitalize text-slate-800 tracking-widest mt-1">
               {daily.name}
             </Text>
-            <Text className="text-[11px] text-slate-500 font-SpaceMono">#{String(daily.id).padStart(3, "0")}</Text>
+            <Text className="text-[13px] text-slate-500 font-SpaceMono">#{String(daily.id).padStart(3, "0")}</Text>
           </View>
         </Pressable>
       )}
@@ -68,7 +68,7 @@ export default function IndexScreen() {
             onPress={() => router.push(link.route as any)}
             accessibilityRole="button"
           >
-            <Text className="font-SpaceMono text-xs text-slate-700">{link.label}</Text>
+            <Text className="font-SpaceMono text-sm text-slate-700">{link.label}</Text>
           </Pressable>
         ))}
       </View>

@@ -3,7 +3,8 @@ import { PokemonCard } from "@/components/PokemonCard";
 import { SearchBar } from "@/components/SearchBar";
 import { useFavorites } from "@/context/FavoritesContext";
 import { usePokedexList } from "@/hooks/usePokedexList";
-import { TYPE_COLORS } from "@/lib/typeColors";
+import { Image } from "expo-image";
+import { TYPE_COLORS, typeIconUrl } from "@/lib/typeColors";
 import type { PokemonListItem } from "@/lib/pokeapi";
 
 interface PokemonGridProps {
@@ -20,7 +21,7 @@ function TypeChips({ selected, onSelect }: { selected: string | null; onSelect: 
       horizontal
       showsHorizontalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
-      contentContainerStyle={{ gap: 6, paddingHorizontal: 12, paddingBottom: 8 }}
+      contentContainerStyle={{ gap: 8, paddingHorizontal: 12, paddingVertical: 4, alignItems: "center" }}
       className="flex-grow-0"
     >
       {Object.entries(TYPE_COLORS).map(([type, color]) => {
@@ -29,15 +30,19 @@ function TypeChips({ selected, onSelect }: { selected: string | null; onSelect: 
           <Pressable
             key={type}
             onPress={() => onSelect(active ? null : type)}
-            className="px-3 py-1 rounded-full border"
-            style={{ backgroundColor: active ? color : "transparent", borderColor: color }}
+            className="w-10 h-10 rounded-full items-center justify-center"
+            style={{
+              backgroundColor: color,
+              // Dim the others while a filter is active; ring the selected one
+              opacity: selected && !active ? 0.35 : 1,
+              borderWidth: active ? 3 : 0,
+              borderColor: "#1e293b",
+            }}
             accessibilityRole="button"
             accessibilityState={{ selected: active }}
             accessibilityLabel={`Filter by ${type} type`}
           >
-            <Text className="font-SpaceMono text-[10px] capitalize" style={{ color: active ? "#fff" : color }}>
-              {type}
-            </Text>
+            <Image source={{ uri: typeIconUrl(type) }} style={{ width: 20, height: 20 }} cachePolicy="memory-disk" />
           </Pressable>
         );
       })}
@@ -60,7 +65,7 @@ export function PokemonGrid({ speciesIds, loading: extraLoading, onSelectPokemon
       {loading || extraLoading ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#DC2626" />
-          <Text className="text-slate-400 font-SpaceMono text-xs mt-3">Loading Pokémon...</Text>
+          <Text className="text-slate-400 font-SpaceMono text-sm mt-3">Loading Pokémon...</Text>
         </View>
       ) : (
         <FlatList
@@ -73,7 +78,7 @@ export function PokemonGrid({ speciesIds, loading: extraLoading, onSelectPokemon
           contentContainerStyle={{ paddingHorizontal: 4, paddingBottom: 8 }}
           ListEmptyComponent={
             <View className="items-center justify-center py-10 px-6">
-              <Text className="text-slate-400 font-SpaceMono text-xs text-center">{error ?? emptyText}</Text>
+              <Text className="text-slate-400 font-SpaceMono text-sm text-center">{error ?? emptyText}</Text>
             </View>
           }
           initialNumToRender={18}

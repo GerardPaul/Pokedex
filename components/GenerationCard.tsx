@@ -45,7 +45,7 @@ export function GenerationCard({ generation, onPress }: GenerationCardProps) {
         ))}
       </View>
       <Text className="text-base font-PokemonSolid tracking-widest text-slate-800 mt-1">Gen {generation.id}</Text>
-      <Text className="text-xs font-SpaceMono mt-1 mb-3" style={{ color: accent }}>
+      <Text className="text-sm font-SpaceMono mt-1 mb-3" style={{ color: accent }}>
         {region}
       </Text>
     </Pressable>

@@ -71,7 +71,7 @@ function SideNav() {
       >
         <Ionicons name="home-outline" size={22} color={isHome ? "#ef4444" : "#94a3b8"} />
         <Text
-          className={`font-SpaceMono text-[7px] mt-0.5 ${
+          className={`font-SpaceMono text-[9px] mt-0.5 ${
             isHome ? "text-red-400" : "text-slate-500"
           }`}
           numberOfLines={1}
@@ -102,7 +102,7 @@ function SideNav() {
             >
               {item.renderIcon(isActive ? "#ef4444" : "#94a3b8")}
               <Text
-                className={`font-SpaceMono text-[7px] mt-0.5 ${
+                className={`font-SpaceMono text-[9px] mt-0.5 ${
                   isActive ? "text-red-400" : "text-slate-500"
                 }`}
                 numberOfLines={1}
@@ -124,7 +124,7 @@ function SideNav() {
               accessibilityRole="button"
             >
               <Ionicons name="chevron-back" size={22} color="#94a3b8" />
-              <Text className="font-SpaceMono text-[7px] mt-0.5 text-slate-500">Back</Text>
+              <Text className="font-SpaceMono text-[9px] mt-0.5 text-slate-500">Back</Text>
             </Pressable>
           </>
         )}

@@ -12,7 +12,7 @@ export function SearchBar({ value, onChangeText, placeholder = "Search name, #nu
     <View className="flex-row items-center bg-white border border-slate-200 rounded-xl px-3 py-2 mx-3 my-2">
       <Ionicons name="search" size={16} color="#94a3b8" />
       <TextInput
-        className="flex-1 ml-2 text-sm text-slate-700 font-SpaceMono"
+        className="flex-1 ml-2 text-base text-slate-700 font-SpaceMono"
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
