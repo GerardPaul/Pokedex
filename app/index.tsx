@@ -3,8 +3,7 @@ import { Animated, View, Text, ScrollView } from "react-native";
 import { router } from "expo-router";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail } from "@/lib/pokeapi";
-import { TYPE_COLORS } from "@/lib/typeColors";
-import { BattlePlatform, PixelButton, Sprite } from "@/components/pixel";
+import { GroundShadow, PixelButton, Sprite } from "@/components/pixel";
 
 const QUICK_LINKS = [
   { label: "POKéDEX", route: "/pokemon" },
@@ -43,7 +42,6 @@ function BlinkingArrow() {
 
 export default function IndexScreen() {
   const { data: daily } = useAsync(fetchPokemonOfTheDay, []);
-  const color = daily ? TYPE_COLORS[daily.types[0]] ?? "#94a3b8" : "#94a3b8";
 
   return (
     <ScrollView
@@ -65,8 +63,8 @@ export default function IndexScreen() {
           <View style={{ height: 130, justifyContent: "flex-end", zIndex: 1 }}>
             <Sprite id={daily.id} size={120} />
           </View>
-          <View style={{ marginTop: -20 }}>
-            <BattlePlatform color={color} width={160} />
+          <View style={{ marginTop: -14 }}>
+            <GroundShadow width={110} />
           </View>
 
           <PixelButton

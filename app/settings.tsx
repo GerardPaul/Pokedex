@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { View, Text, Alert, Platform } from "react-native";
 import { useAsync } from "@/hooks/useAsync";
-import { cacheSize, clearCache } from "@/lib/cache";
+import { cacheStats, clearCache } from "@/lib/cache";
+import { IMAGE_CACHE_LIMIT } from "@/lib/imageCache";
 import { useFavorites } from "@/context/FavoritesContext";
 import { PixelBox, PixelButton, ScreenHeader } from "@/components/pixel";
 
 function formatBytes(bytes: number): string {
+  // One decimal, minus a trailing ".0" (100 MB, not 100.0 MB)
+  const fmt = (n: number) => n.toFixed(1).replace(/\.0$/, "");
   if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+  if (bytes < 1024 * 1024) return `${fmt(bytes / 1024)} KB`;
+  return `${fmt(bytes / 1024 / 1024)} MB`;
 }
 
 export default function SettingsScreen() {
   const [version, setVersion] = useState(0);
-  const size = useAsync(cacheSize, [version]);
+  const stats = useAsync(cacheStats, [version]);
+  const s = stats.data;
   const { favorites } = useFavorites();
 
   function confirmClear() {
@@ -37,9 +41,16 @@ export default function SettingsScreen() {
         <PixelBox className="p-4">
           <Text className="font-Pixel text-[11px] text-ink">SAVE DATA</Text>
           <Text className="font-PixelBody text-2xl text-ink mt-2">
-            {size.loading ? "…" : size.data !== null ? formatBytes(size.data) : "Unknown"}
+            {stats.loading ? "…" : s ? formatBytes(s.totalBytes) : "Unknown"}
           </Text>
-          <Text className="font-PixelBody text-base text-ink/60">Cached Pokémon data. Clearing also removes cached images.</Text>
+          {s && (
+            <Text className="font-PixelBody text-base text-ink/70">
+              {s.imageCount} images ({formatBytes(s.imageBytes)}) + Pokémon data ({formatBytes(s.dataBytes)})
+            </Text>
+          )}
+          <Text className="font-PixelBody text-base text-ink/60 mt-1">
+            Images are capped at {formatBytes(IMAGE_CACHE_LIMIT)}; the oldest are removed automatically.
+          </Text>
           <PixelButton
             containerClassName="self-start mt-3"
             className="px-3 py-2"

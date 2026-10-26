@@ -7,7 +7,8 @@ module.exports = {
       colors: {
         cream: "#F4EDDB", // app background
         paper: "#FFFFFF", // dialogue box fill
-        ink: "#2B2B2B", // borders, main text
+        ink: "#3D4152", // borders, shadows, main text (soft slate, not pure black)
+        muted: "#8A8DA0", // inactive icons and labels
         shade: "#B8B0A0", // inner borders, muted text
         "dex-red": "#E3350D",
         "dex-blue": "#3B4CCA",

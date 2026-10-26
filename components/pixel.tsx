@@ -3,13 +3,14 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Animated, Easing, Pressable, Text, View, type StyleProp, type ViewStyle } from "react-native";
 import { router } from "expo-router";
-import { Image } from "expo-image";
+import { CachedImage } from "@/components/CachedImage";
 import * as Haptics from "expo-haptics";
 import { animatedSpriteUrl, pokeballUrl, spriteUrlFromId } from "@/lib/pokeapi";
 import { TYPE_COLORS, typeIconUrl } from "@/lib/typeColors";
 
 const SHADOW = 4;
-export const INK = "#2B2B2B";
+export const INK = "#3D4152";
+export const MUTED = "#8A8DA0";
 
 /** Light haptic tick; haptics are unavailable on web, so failures are ignored. */
 export function tap() {
@@ -157,7 +158,7 @@ export function TypeBadge({ type, iconOnly, selected, dimmed }: TypeBadgeProps) 
         opacity: dimmed ? 0.35 : 1,
       }}
     >
-      <Image source={{ uri: typeIconUrl(type) }} style={{ width: 16, height: 16 }} cachePolicy="memory-disk" />
+      <CachedImage uri={typeIconUrl(type)} style={{ width: 16, height: 16 }} />
       {!iconOnly && (
         <Text className="font-Pixel text-[10px] text-white uppercase" style={OUTLINE}>
           {type}
@@ -168,30 +169,34 @@ export function TypeBadge({ type, iconOnly, selected, dimmed }: TypeBadgeProps) 
 }
 
 /** Animated Showdown sprite, falling back to the static sprite where no GIF exists. */
-export function Sprite({ id, shiny = false, size }: { id: number; shiny?: boolean; size: number }) {
+export function Sprite({
+  id,
+  shiny = false,
+  size,
+  animated = true,
+}: {
+  id: number;
+  shiny?: boolean;
+  size: number;
+  animated?: boolean;
+}) {
   const [failed, setFailed] = useState(false);
   useEffect(() => setFailed(false), [id, shiny]);
 
   return (
-    <Image
-      source={{ uri: failed ? spriteUrlFromId(id, shiny) : animatedSpriteUrl(id, shiny) }}
+    <CachedImage
+      uri={failed || !animated ? spriteUrlFromId(id, shiny) : animatedSpriteUrl(id, shiny)}
       style={{ width: size, height: size }}
       contentFit="contain"
-      cachePolicy="memory-disk"
       onError={() => setFailed(true)}
       recyclingKey={`sprite-${id}-${shiny}-${failed}`}
     />
   );
 }
 
-/** Type-colored oval the sprite stands on, like a battle platform. */
-export function BattlePlatform({ color, width = 180 }: { color: string; width?: number }) {
-  return (
-    <View
-      className="border-2 border-ink"
-      style={{ width, height: width * 0.22, borderRadius: width, backgroundColor: color + "88" }}
-    />
-  );
+/** Soft dark oval under a Pokémon's feet. */
+export function GroundShadow({ width = 140 }: { width?: number }) {
+  return <View style={{ width, height: width * 0.2, borderRadius: width, backgroundColor: "rgba(30, 32, 48, 0.28)" }} />;
 }
 
 /** Bouncing Poké Ball loading indicator. */
@@ -212,7 +217,7 @@ export function PixelLoader({ label = "Loading..." }: { label?: string }) {
   return (
     <View className="flex-1 items-center justify-center py-10">
       <Animated.View style={{ transform: [{ translateY: y }] }}>
-        <Image source={{ uri: pokeballUrl }} style={{ width: 40, height: 40 }} cachePolicy="memory-disk" />
+        <CachedImage uri={pokeballUrl} style={{ width: 40, height: 40 }} />
       </Animated.View>
       <Text className="font-Pixel text-[10px] text-ink mt-3">{label}</Text>
     </View>

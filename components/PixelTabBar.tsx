@@ -1,7 +1,7 @@
 import { View, Text, Pressable } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import type { BottomTabBarProps } from "expo-router/js-tabs";
-import { tap, INK } from "@/components/pixel";
+import { tap, MUTED } from "@/components/pixel";
 
 type IconName = keyof typeof MaterialCommunityIcons.glyphMap;
 
@@ -38,11 +38,12 @@ export function PixelTabBar({ state, navigation, insets }: BottomTabBarProps) {
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}
           >
-            <MaterialCommunityIcons name={tab.icon} size={24} color={focused ? "#E3350D" : INK} />
-            <Text className={`font-Pixel text-[8px] mt-1 ${focused ? "text-dex-red" : "text-ink"}`}>
-              {focused ? "▶" : " "}
-              {tab.label}
-            </Text>
+            <MaterialCommunityIcons name={tab.icon} size={24} color={focused ? "#E3350D" : MUTED} />
+            {/* Label is centered under the icon; when selected, the ▶ + label pair is centered instead */}
+            <View className="flex-row items-center justify-center mt-1">
+              {focused && <Text className="font-Pixel text-[8px] text-dex-red mr-0.5">▶</Text>}
+              <Text className={`font-Pixel text-[8px] ${focused ? "text-dex-red" : "text-muted"}`}>{tab.label}</Text>
+            </View>
           </Pressable>
         );
       })}

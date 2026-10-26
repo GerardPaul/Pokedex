@@ -10,6 +10,7 @@ export default function GenPokemonDetailScreen() {
     <PokemonDetailView
       id={Number(pid)}
       ids={generation.data?.speciesIds ?? [Number(pid)]}
+      stepParam="pid"
       routeFor={(next) => `/generations/${id}/pokemon/${next}`}
     />
   );

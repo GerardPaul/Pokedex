@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Text, View } from "react-native";
-import { Image } from "expo-image";
+import { CachedImage } from "@/components/CachedImage";
 import { PixelButton } from "@/components/pixel";
 import type { PokemonListItem } from "@/lib/pokeapi";
 
@@ -24,11 +24,10 @@ export const PokemonCard = memo(function PokemonCard({ pokemon, onPress, favorit
         <Text className="font-Pixel text-[8px] text-ink/60">#{String(pokemon.id).padStart(3, "0")}</Text>
         {favorite && <Text className="text-[12px] text-hp-yellow">★</Text>}
       </View>
-      <Image
-        source={{ uri: pokemon.sprite }}
+      <CachedImage
+        uri={pokemon.sprite}
         style={{ width: 72, height: 72 }}
         contentFit="contain"
-        cachePolicy="memory-disk"
         transition={150}
         recyclingKey={`pokemon-${pokemon.id}`}
       />

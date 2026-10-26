@@ -167,7 +167,7 @@ function EvoTab({ url, currentId, routeFor }: { url: string | null; currentId: n
                   accessibilityLabel={`Go to ${p.name}`}
                   accessibilityRole="button"
                 >
-                  <Sprite id={p.id} size={64} />
+                  <Sprite id={p.id} size={64} animated={false} />
                   <Text className={`font-PixelBody text-base capitalize ${current ? "text-dex-red" : "text-ink"}`}>
                     {p.name}
                   </Text>

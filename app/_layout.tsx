@@ -5,6 +5,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
 import { FavoritesProvider } from "@/context/FavoritesContext";
 import { PixelTabBar } from "@/components/PixelTabBar";
+import { trimImageCache } from "@/lib/imageCache";
+
+// Enforce the image cache cap once per launch (it is also checked after downloads)
+trimImageCache();
 
 const CREAM = "#F4EDDB";
 
@@ -23,7 +27,8 @@ export default function RootLayout() {
         <StatusBar style="dark" />
         <Tabs
           tabBar={(props) => <PixelTabBar {...props} />}
-          screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: CREAM } }}
+          // Leaving a tab resets its stack, so coming back shows the tab's first screen
+          screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: CREAM }, popToTopOnBlur: true }}
         >
           <Tabs.Screen name="index" />
           <Tabs.Screen name="pokemon" />

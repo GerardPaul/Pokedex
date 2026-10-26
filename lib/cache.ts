@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
+import { clearImageCache, imageCacheStats } from "./imageCache";
 
 // Bump the version to invalidate everything cached by older app builds.
 const PREFIX = "@pokedex/v2/";
@@ -46,15 +47,27 @@ async function cacheKeys(): Promise<string[]> {
   return keys.filter((k) => k.startsWith(CACHE_ROOT));
 }
 
-/** Approximate bytes used by cached API data. */
-export async function cacheSize(): Promise<number> {
+export interface CacheStats {
+  /** Pokémon data (JSON) plus cached images, in bytes. */
+  totalBytes: number;
+  dataBytes: number;
+  imageBytes: number;
+  imageCount: number;
+}
+
+export async function cacheStats(): Promise<CacheStats> {
   const entries = await AsyncStorage.multiGet(await cacheKeys());
-  return entries.reduce((sum, [, v]) => sum + (v?.length ?? 0), 0);
+  // String length ≈ bytes: cached JSON is almost entirely ASCII
+  const dataBytes = entries.reduce((sum, [, v]) => sum + (v?.length ?? 0), 0);
+  const images = imageCacheStats();
+  return { totalBytes: dataBytes + images.bytes, dataBytes, imageBytes: images.bytes, imageCount: images.count };
 }
 
 export async function clearCache(): Promise<void> {
   memory.clear();
   await AsyncStorage.multiRemove(await cacheKeys());
+  clearImageCache();
+  // Also drop anything expo-image cached itself before the app managed its own image cache
   await Image.clearDiskCache().catch(() => {});
   await Image.clearMemoryCache().catch(() => {});
 }

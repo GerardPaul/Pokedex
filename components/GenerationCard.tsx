@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import { Image } from "expo-image";
+import { CachedImage } from "@/components/CachedImage";
 import { PixelButton } from "@/components/pixel";
 import { spriteUrlFromId, type GenerationListItem } from "@/lib/pokeapi";
 
@@ -38,13 +38,7 @@ export function GenerationCard({ generation, onPress }: GenerationCardProps) {
       <View className="h-2 w-full" style={{ backgroundColor: accent }} />
       <View className="flex-row mt-2">
         {(info?.starters ?? []).map((id) => (
-          <Image
-            key={id}
-            source={{ uri: spriteUrlFromId(id) }}
-            style={{ width: 44, height: 44 }}
-            contentFit="contain"
-            cachePolicy="memory-disk"
-          />
+          <CachedImage key={id} uri={spriteUrlFromId(id)} style={{ width: 44, height: 44 }} contentFit="contain" />
         ))}
       </View>
       <Text className="font-Pixel text-[13px] text-ink mt-1">GEN {ROMAN[generation.id] ?? generation.id}</Text>
