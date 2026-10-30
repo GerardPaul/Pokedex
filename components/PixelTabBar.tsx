@@ -34,7 +34,7 @@ export function PixelTabBar({ state, navigation, insets }: BottomTabBarProps) {
           <Pressable
             key={route.key}
             onPress={onPress}
-            className={`flex-1 items-center pt-2 pb-1.5 ${focused ? "bg-cream" : ""}`}
+            className="flex-1 items-center pt-2 pb-1.5"
             accessibilityRole="tab"
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}

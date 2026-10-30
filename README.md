@@ -1,12 +1,12 @@
 # Compendeon
 
-A Pokédex app in the style of the Pokémon GBA/DS games, built with Expo (SDK 57), Expo Router and NativeWind. Data comes from [PokéAPI](https://pokeapi.co).
+A Pokémon dex app in the style of the Pokémon GBA/DS games, built with Expo (SDK 57), Expo Router and NativeWind. Data comes from [PokéAPI](https://pokeapi.co).
 
 ## Features
 
-- National Pokédex with instant search by name, `#number` or type, plus type filters
+- National dex with instant search by name, `#number` or type, plus type filters
 - Browse by generation, with each generation's own list
-- Pokémon pages: official artwork, animated sprite, stats, info, Pokédex entries and evolutions
+- Pokémon pages: official artwork, animated sprite, stats, info, dex entries and evolutions
 - Favorites, saved on the device
 - Offline-friendly caching: Pokémon data is stored locally, and images go into an app-managed cache capped at 100 MB (oldest removed first). The Options screen shows the total and can clear it.
 

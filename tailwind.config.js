@@ -18,7 +18,7 @@ module.exports = {
       fontFamily: {
         Pixel: "PressStart2P", // titles, buttons, numbers
         PixelBody: "PixelifySans", // names and longer text
-        PokemonSolid: "PokemonSolid", // home logo only
+        Logo: "Silkscreen", // home logo only (Silkscreen Bold)
       },
     },
   },

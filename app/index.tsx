@@ -7,7 +7,7 @@ import { PixelButton, Sprite } from "@/components/pixel";
 import colors from "@/lib/colors";
 
 const QUICK_LINKS = [
-  { label: "POKéDEX", route: "/pokemon" },
+  { label: "DEX", route: "/pokemon" },
   { label: "GENERATIONS", route: "/generations" },
   { label: "FAVORITES", route: "/favorites" },
 ];
@@ -50,14 +50,13 @@ export default function IndexScreen() {
       showsVerticalScrollIndicator={false}
     >
       <Text
-        className="font-PokemonSolid text-dex-red tracking-widest text-center text-4xl"
-        style={{ lineHeight: 56, textShadowColor: colors.dexBlue, textShadowOffset: { width: 3, height: 3 }, textShadowRadius: 0 }}
+        className="font-Logo text-dex-red text-center text-[36px]"
+        style={{ lineHeight: 46 }}
         adjustsFontSizeToFit
         numberOfLines={1}
       >
         Compendeon
       </Text>
-      <Text className="font-Pixel text-[11px] text-ink mt-1">POKéDEX</Text>
 
       {daily && (
         <View className="w-full max-w-sm items-center mt-6">

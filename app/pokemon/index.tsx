@@ -10,7 +10,7 @@ export default function PokemonScreen() {
   const handleSelect = useCallback((p: PokemonListItem) => router.push(`/pokemon/${p.id}` as any), [router]);
   return (
     <View className="flex-1">
-      <ScreenHeader title="POKéDEX" />
+      <ScreenHeader title="DEX" />
       <PokemonGrid onSelectPokemon={handleSelect} />
     </View>
   );

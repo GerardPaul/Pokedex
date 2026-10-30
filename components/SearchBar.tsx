@@ -13,7 +13,7 @@ export function SearchBar({ value, onChangeText, placeholder = "Search name, #no
     <PixelBox containerClassName="mx-3 mt-2" className="flex-row items-center px-3 py-1.5">
       <Text className="font-Pixel text-[12px] text-dex-red mr-2">▶</Text>
       <TextInput
-        className="flex-1 font-PixelBody text-lg text-ink py-1"
+        className="flex-1 font-PixelBody text-[18px] text-ink py-1.5"
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}

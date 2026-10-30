@@ -15,7 +15,7 @@ export default function RootLayout() {
   const [loaded] = useFonts({
     PressStart2P: require("../assets/fonts/PressStart2P-Regular.ttf"),
     PixelifySans: require("../assets/fonts/PixelifySans.ttf"),
-    PokemonSolid: require("../assets/fonts/Pokemon-Solid.ttf"),
+    Silkscreen: require("../assets/fonts/Silkscreen-Bold.ttf"),
   });
 
   if (!loaded) return null;
