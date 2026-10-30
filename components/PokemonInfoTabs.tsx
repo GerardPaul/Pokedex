@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { HpBar, PixelBox, PixelButton, PixelLoader, Sprite, tap } from "@/components/pixel";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchEvolutionChain, type PokemonDetail, type PokemonSpecies } from "@/lib/pokeapi";
+import colors from "@/lib/colors";
 
 type Tab = "info" | "dex" | "stats" | "evo";
 const TABS: Tab[] = ["stats", "info", "dex", "evo"];
@@ -19,7 +20,7 @@ const STAT_LABELS: Record<string, string> = {
 
 interface PokemonInfoTabsProps {
   detail: PokemonDetail;
-  species: PokemonSpecies | null;
+  species: PokemonSpecies;
   routeFor: (id: number) => string;
 }
 
@@ -34,7 +35,7 @@ export function PokemonInfoTabs({ detail, species, routeFor }: PokemonInfoTabsPr
             key={t}
             containerClassName="flex-1"
             className="py-2 items-center"
-            tint={tab === t ? undefined : "#E8E0CC"}
+            tint={tab === t ? undefined : colors.sand}
             selected={tab === t}
             onPress={() => setTab(t)}
             accessibilityLabel={`${t} tab`}
@@ -51,7 +52,7 @@ export function PokemonInfoTabs({ detail, species, routeFor }: PokemonInfoTabsPr
         {tab === "info" && <InfoTab detail={detail} />}
         {tab === "dex" && <DexTab species={species} />}
         {tab === "stats" && <StatsTab detail={detail} />}
-        {tab === "evo" && <EvoTab url={species?.evolutionChainUrl ?? null} currentId={detail.id} routeFor={routeFor} />}
+        {tab === "evo" && <EvoTab url={species.evolutionChainUrl} currentId={detail.id} routeFor={routeFor} />}
       </PixelBox>
     </View>
   );

@@ -1,5 +1,6 @@
 import { TextInput, Pressable, Text } from "react-native";
 import { PixelBox } from "@/components/pixel";
+import colors from "@/lib/colors";
 
 interface SearchBarProps {
   value: string;
@@ -16,7 +17,7 @@ export function SearchBar({ value, onChangeText, placeholder = "Search name, #no
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#9A9284"
+        placeholderTextColor={colors.muted}
         autoCapitalize="none"
         autoCorrect={false}
         returnKeyType="search"

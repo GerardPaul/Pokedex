@@ -5,6 +5,7 @@ import { cacheStats, clearCache } from "@/lib/cache";
 import { IMAGE_CACHE_LIMIT } from "@/lib/imageCache";
 import { useFavorites } from "@/context/FavoritesContext";
 import { PixelBox, PixelButton, ScreenHeader } from "@/components/pixel";
+import colors from "@/lib/colors";
 
 function formatBytes(bytes: number): string {
   // One decimal, minus a trailing ".0" (100 MB, not 100.0 MB)
@@ -54,7 +55,7 @@ export default function SettingsScreen() {
           <PixelButton
             containerClassName="self-start mt-3"
             className="px-3 py-2"
-            tint="#E3350D"
+            tint={colors.dexRed}
             onPress={confirmClear}
             accessibilityLabel="Clear cache"
           >

@@ -6,11 +6,10 @@ import { router } from "expo-router";
 import { CachedImage } from "@/components/CachedImage";
 import * as Haptics from "expo-haptics";
 import { animatedSpriteUrl, pokeballUrl, spriteUrlFromId } from "@/lib/pokeapi";
-import { TYPE_COLORS, typeIconUrl } from "@/lib/typeColors";
+import { typeColor, typeIconUrl } from "@/lib/typeColors";
+import colors from "@/lib/colors";
 
 const SHADOW = 4;
-export const INK = "#3D4152";
-export const MUTED = "#8A8DA0";
 
 /** Light haptic tick; haptics are unavailable on web, so failures are ignored. */
 export function tap() {
@@ -18,7 +17,7 @@ export function tap() {
 }
 
 // Outlined text reads on any background (white text on yellow/pink type colors).
-export const OUTLINE = { textShadowColor: INK, textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 0 };
+const OUTLINE = { textShadowColor: colors.ink, textShadowOffset: { width: 1, height: 1 }, textShadowRadius: 0 };
 
 interface PixelBoxProps {
   children?: ReactNode;
@@ -30,12 +29,10 @@ interface PixelBoxProps {
   /** Fill color instead of white. */
   tint?: string;
   shadow?: boolean;
-  /** Stretch to fill the container's height (use with flex-1 on the container). */
-  fill?: boolean;
 }
 
 /** The game's dialogue box: ink outer border, shade inner border, hard drop shadow. */
-export function PixelBox({ children, className, containerClassName, style, tint, shadow = true, fill }: PixelBoxProps) {
+export function PixelBox({ children, className, containerClassName, style, tint, shadow = true }: PixelBoxProps) {
   return (
     <View className={containerClassName} style={[{ marginRight: SHADOW, marginBottom: SHADOW }, style]}>
       {shadow && (
@@ -45,9 +42,9 @@ export function PixelBox({ children, className, containerClassName, style, tint,
         />
       )}
       {/* White base under the tint, so a translucent tint never shows the shadow through */}
-      <View className={`border-[3px] border-ink bg-paper ${fill ? "flex-1" : ""}`}>
+      <View className="border-[3px] border-ink bg-paper">
         <View
-          className={`border-2 border-shade/60 ${fill ? "flex-1" : ""} ${className ?? ""}`}
+          className={`border-2 border-shade/60 ${className ?? ""}`}
           style={tint ? { backgroundColor: tint } : undefined}
         >
           {children}
@@ -124,7 +121,7 @@ export function ScreenHeader({ title, back, right }: { title: string; back?: boo
 
 /** Game-style HP bar for a base stat: green, then yellow, then red as the value drops. */
 export function HpBar({ label, value, max = 200 }: { label: string; value: number; max?: number }) {
-  const color = value < 50 ? "#F05038" : value < 90 ? "#F8D030" : "#38C870";
+  const color = value < 50 ? colors.hpRed : value < 90 ? colors.hpYellow : colors.hpGreen;
   const pct = Math.min((value / max) * 100, 100);
   return (
     <View className="flex-row items-center gap-2 mb-2">
@@ -153,7 +150,7 @@ export function TypeBadge({ type, iconOnly, selected, dimmed }: TypeBadgeProps) 
     <View
       className={`flex-row items-center justify-center border-ink ${iconOnly ? "w-10 h-10" : "gap-1.5 px-2 py-1.5"}`}
       style={{
-        backgroundColor: TYPE_COLORS[type] ?? "#94a3b8",
+        backgroundColor: typeColor(type),
         borderWidth: selected ? 3 : 2,
         opacity: dimmed ? 0.35 : 1,
       }}
@@ -194,9 +191,8 @@ export function Sprite({
   );
 }
 
-
 /** Bouncing Poké Ball loading indicator. */
-export function PixelLoader({ label = "Loading..." }: { label?: string }) {
+export function PixelLoader() {
   const y = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -215,7 +211,7 @@ export function PixelLoader({ label = "Loading..." }: { label?: string }) {
       <Animated.View style={{ transform: [{ translateY: y }] }}>
         <CachedImage uri={pokeballUrl} style={{ width: 40, height: 40 }} />
       </Animated.View>
-      <Text className="font-Pixel text-[10px] text-ink mt-3">{label}</Text>
+      <Text className="font-Pixel text-[10px] text-ink mt-3">Loading...</Text>
     </View>
   );
 }

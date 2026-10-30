@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import { CachedImage } from "@/components/CachedImage";
 import { PixelButton } from "@/components/pixel";
+import colors from "@/lib/colors";
 import { spriteUrlFromId, type GenerationListItem } from "@/lib/pokeapi";
 
 export const ROMAN = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
@@ -26,7 +27,7 @@ interface GenerationCardProps {
 export function GenerationCard({ generation, onPress }: GenerationCardProps) {
   const info = GEN_INFO[generation.id];
   const region = info?.region ?? "Unknown";
-  const accent = info?.accent ?? "#94a3b8";
+  const accent = info?.accent ?? colors.muted;
 
   return (
     <PixelButton

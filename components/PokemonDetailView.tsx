@@ -5,7 +5,8 @@ import { CachedImage } from "@/components/CachedImage";
 import { useFavorites } from "@/context/FavoritesContext";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail, fetchPokemonSpecies, shinyArtworkUrlFromId } from "@/lib/pokeapi";
-import { TYPE_COLORS } from "@/lib/typeColors";
+import { typeColor } from "@/lib/typeColors";
+import colors from "@/lib/colors";
 import {
   Message,
   PixelBox,
@@ -89,7 +90,7 @@ export function PokemonDetailView({ id, ids, stepParam, routeFor }: PokemonDetai
   }
 
   const [detail, species] = shown;
-  const color = TYPE_COLORS[detail.types[0]] ?? "#94a3b8";
+  const color = typeColor(detail.types[0]);
   const artwork = shiny ? shinyArtworkUrlFromId(detail.id) : detail.artwork;
 
   const stepIds = ids ?? all.data?.map((p) => p.id) ?? [];
@@ -141,7 +142,7 @@ export function PokemonDetailView({ id, ids, stepParam, routeFor }: PokemonDetai
           <PixelButton
             containerClassName="mt-3"
             className="px-3 py-1.5"
-            tint={shiny ? "#F8D030" : undefined}
+            tint={shiny ? colors.hpYellow : undefined}
             selected={shiny}
             onPress={() => setShiny((v) => !v)}
             accessibilityLabel="Toggle shiny"

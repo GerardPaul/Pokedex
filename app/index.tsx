@@ -4,6 +4,7 @@ import { router } from "expo-router";
 import { useAsync } from "@/hooks/useAsync";
 import { fetchAllPokemon, fetchPokemonDetail } from "@/lib/pokeapi";
 import { PixelButton, Sprite } from "@/components/pixel";
+import colors from "@/lib/colors";
 
 const QUICK_LINKS = [
   { label: "POKéDEX", route: "/pokemon" },
@@ -34,7 +35,7 @@ function BlinkingArrow() {
   }, [opacity]);
   return (
     // Animated.Text doesn't take NativeWind classes, so style it directly
-    <Animated.Text style={{ opacity, alignSelf: "flex-end", fontFamily: "PressStart2P", fontSize: 10, color: "#E3350D" }}>
+    <Animated.Text style={{ opacity, alignSelf: "flex-end", fontFamily: "PressStart2P", fontSize: 10, color: colors.dexRed }}>
       ▼
     </Animated.Text>
   );
@@ -50,7 +51,7 @@ export default function IndexScreen() {
     >
       <Text
         className="font-PokemonSolid text-dex-red tracking-widest text-center text-4xl"
-        style={{ lineHeight: 56, textShadowColor: "#3B4CCA", textShadowOffset: { width: 3, height: 3 }, textShadowRadius: 0 }}
+        style={{ lineHeight: 56, textShadowColor: colors.dexBlue, textShadowOffset: { width: 3, height: 3 }, textShadowRadius: 0 }}
         adjustsFontSizeToFit
         numberOfLines={1}
       >

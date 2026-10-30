@@ -1,50 +1,35 @@
-# Welcome to your Expo app 👋
+# Compendeon
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A Pokédex app in the style of the Pokémon GBA/DS games, built with Expo (SDK 57), Expo Router and NativeWind. Data comes from [PokéAPI](https://pokeapi.co).
 
-## Get started
+## Features
 
-1. Install dependencies
+- National Pokédex with instant search by name, `#number` or type, plus type filters
+- Browse by generation, with each generation's own list
+- Pokémon pages: official artwork, animated sprite, stats, info, Pokédex entries and evolutions
+- Favorites, saved on the device
+- Offline-friendly caching: Pokémon data is stored locally, and images go into an app-managed cache capped at 100 MB (oldest removed first). The Options screen shows the total and can clear it.
 
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-    npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run it
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Scan the QR code with Expo Go (SDK 57) or press `w` for the web version.
 
-## Learn more
+## Checks
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npx tsc --noEmit
+npx jest --watchAll=false
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project layout
 
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `app/`: screens (file-based routes); tabs are set up in `app/_layout.tsx`
+- `components/pixel.tsx`: the pixel UI kit (dialogue boxes, buttons, HP bars, type badges, loader)
+- `lib/pokeapi.ts`: PokéAPI fetchers, trimmed and cached through `lib/cache.ts`
+- `lib/imageCache.ts`: the 100 MB image cache used by `components/CachedImage.tsx`
+- `lib/colors.js`: the palette shared by Tailwind classes and inline styles

@@ -19,6 +19,11 @@ export const TYPE_COLORS: Record<string, string> = {
   fairy: "#f9a8d4",
 };
 
+/** Type color, falling back to the "normal" gray for anything unknown. */
+export function typeColor(type: string): string {
+  return TYPE_COLORS[type] ?? TYPE_COLORS.normal;
+}
+
 // White glyph SVGs (MIT, github.com/duiker101/pokemon-type-svg-icons) — draw on a type-colored background
 export function typeIconUrl(type: string): string {
   return `https://cdn.jsdelivr.net/gh/duiker101/pokemon-type-svg-icons@1.0.0/icons/${type}.svg`;

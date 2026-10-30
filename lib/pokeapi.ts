@@ -1,7 +1,8 @@
 import { cached } from "./cache";
 
 const BASE = "https://pokeapi.co/api/v2";
-const SPRITES = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/pokemon";
+const SPRITE_ROOT = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites";
+const SPRITES = `${SPRITE_ROOT}/pokemon`;
 
 // ─── Types (trimmed shapes — only what the app renders gets cached) ───────────
 
@@ -36,7 +37,6 @@ export interface PokemonSpecies {
 
 export interface GenerationListItem {
   id: number;
-  name: string;
 }
 
 export interface GenerationDetail {
@@ -69,7 +69,7 @@ export function animatedSpriteUrl(id: number, shiny = false): string {
   return `${SPRITES}/other/showdown/${shiny ? "shiny/" : ""}${id}.gif`;
 }
 
-export const pokeballUrl = "https://cdn.jsdelivr.net/gh/PokeAPI/sprites@master/sprites/items/poke-ball.png";
+export const pokeballUrl = `${SPRITE_ROOT}/items/poke-ball.png`;
 
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
@@ -165,7 +165,7 @@ export function fetchEvolutionChain(url: string): Promise<EvolutionStages> {
 export function fetchGenerations(): Promise<GenerationListItem[]> {
   return cached("generations", async () => {
     const data = await fetchJson<{ results: NamedResource[] }>(`${BASE}/generation`);
-    return data.results.map((r) => ({ id: idFromUrl(r.url), name: r.name }));
+    return data.results.map((r) => ({ id: idFromUrl(r.url) }));
   });
 }
 
