@@ -22,12 +22,12 @@ export default function RootLayout() {
 
   return (
     <FavoritesProvider>
-      <SafeAreaView edges={["top"]} className="flex-1 bg-cream">
-        <StatusBar style="dark" />
+      <SafeAreaView edges={["top"]} className="flex-1 bg-shell">
+        <StatusBar style="light" />
         <Tabs
           tabBar={(props) => <PixelTabBar {...props} />}
           // Leaving a tab resets its stack, so coming back shows the tab's first screen
-          screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.cream }, popToTopOnBlur: true }}
+          screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.body }, popToTopOnBlur: true }}
         >
           <Tabs.Screen name="index" />
           <Tabs.Screen name="pokemon" />

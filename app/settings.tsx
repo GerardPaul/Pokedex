@@ -55,7 +55,7 @@ export default function SettingsScreen() {
           <PixelButton
             containerClassName="self-start mt-3"
             className="px-3 py-2"
-            tint={colors.dexRed}
+            tint={colors.shell}
             onPress={confirmClear}
             accessibilityLabel="Clear cache"
           >

@@ -7,12 +7,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        cream: colors.cream,
-        paper: colors.paper,
+        shell: colors.shell,
+        body: colors.body,
+        "body-dark": colors.bodyDark,
+        screen: colors.screen,
+        bezel: colors.bezel,
         ink: colors.ink,
+        platform: colors.platform,
+        lime: colors.lime,
         muted: colors.muted,
         shade: colors.shade,
-        "dex-red": colors.dexRed,
         "hp-yellow": colors.hpYellow,
       },
       fontFamily: {

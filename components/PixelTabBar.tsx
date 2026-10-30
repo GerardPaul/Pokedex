@@ -17,7 +17,7 @@ const TABS: Record<string, { label: string; icon: IconName }> = {
 
 export function PixelTabBar({ state, navigation, insets }: BottomTabBarProps) {
   return (
-    <View className="flex-row bg-paper border-t-[3px] border-ink" style={{ paddingBottom: insets.bottom }}>
+    <View className="flex-row bg-body-dark border-t-[3px] border-shell" style={{ paddingBottom: insets.bottom }}>
       {state.routes.map((route, index) => {
         const tab = TABS[route.name];
         if (!tab) return null;
@@ -39,11 +39,11 @@ export function PixelTabBar({ state, navigation, insets }: BottomTabBarProps) {
             accessibilityState={{ selected: focused }}
             accessibilityLabel={tab.label}
           >
-            <MaterialCommunityIcons name={tab.icon} size={24} color={focused ? colors.dexRed : colors.muted} />
+            <MaterialCommunityIcons name={tab.icon} size={24} color={focused ? colors.lime : colors.muted} />
             {/* Label is centered under the icon; when selected, the ▶ + label pair is centered instead */}
             <View className="flex-row items-center justify-center mt-1">
-              {focused && <Text className="font-Pixel text-[8px] text-dex-red mr-0.5">▶</Text>}
-              <Text className={`font-Pixel text-[8px] ${focused ? "text-dex-red" : "text-muted"}`}>{tab.label}</Text>
+              {focused && <Text className="font-Pixel text-[8px] text-lime mr-0.5">▶</Text>}
+              <Text className={`font-Pixel text-[8px] ${focused ? "text-lime" : "text-muted"}`}>{tab.label}</Text>
             </View>
           </Pressable>
         );

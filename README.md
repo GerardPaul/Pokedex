@@ -32,4 +32,5 @@ npx jest --watchAll=false
 - `components/pixel.tsx`: the pixel UI kit (dialogue boxes, buttons, HP bars, type badges, loader)
 - `lib/pokeapi.ts`: PokéAPI fetchers, trimmed and cached through `lib/cache.ts`
 - `lib/imageCache.ts`: the 100 MB image cache used by `components/CachedImage.tsx`
-- `lib/colors.js`: the palette shared by Tailwind classes and inline styles
+- `lib/colors.js`: the device palette shared by Tailwind classes and inline styles
+- `assets/images`: app icon, splash and logo, redrawn from the original Procreate mockup
