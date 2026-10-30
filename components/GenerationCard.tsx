@@ -36,7 +36,7 @@ export function GenerationCard({ generation, onPress }: GenerationCardProps) {
       onPress={() => onPress(generation)}
       accessibilityLabel={`Generation ${generation.id}, ${region} region`}
     >
-      <View className="h-2 w-full" style={{ backgroundColor: accent }} />
+      <View className="h-1.5 self-stretch mx-2 mt-1.5" style={{ backgroundColor: accent }} />
       <View className="flex-row mt-2">
         {(info?.starters ?? []).map((id) => (
           <CachedImage key={id} uri={spriteUrlFromId(id)} style={{ width: 44, height: 44 }} contentFit="contain" />

@@ -155,7 +155,14 @@ export function HazardStripes({ height = 12 }: { height?: number }) {
         <View
           key={i}
           className="bg-lime"
-          style={{ width: 7, marginLeft: 6, height: height * 2, marginTop: -height / 2, transform: [{ skewX: "-35deg" }] }}
+          style={{
+            width: 7,
+            // The first stripe starts just past the left edge so the pattern is cut evenly, like on the right
+            marginLeft: i === 0 ? -4 : 6,
+            height: height * 2,
+            marginTop: -height / 2,
+            transform: [{ skewX: "-35deg" }],
+          }}
         />
       ))}
     </View>

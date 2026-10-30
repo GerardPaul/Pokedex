@@ -172,7 +172,7 @@ export function PokemonDetailView({ id, ids, stepParam, routeFor }: PokemonDetai
 
         {/* Slate body with the red trim, the lower screen and the device buttons */}
         <View className="px-3 pt-12">
-          <View className="border-x-2 border-b-2 border-shell px-2 pb-3 pt-2" style={{ borderBottomLeftRadius: 6, borderBottomRightRadius: 6 }}>
+          <View className="px-2 pb-3 pt-2">
             <PixelBox cut={16} className="p-4" style={{ minHeight: 190 }}>
               <InfoTabContent tab={tab} detail={detail} species={species} routeFor={routeFor} />
             </PixelBox>
